@@ -80,11 +80,19 @@ void sendSSID(void)
     server.send(200, "application/json", jsonString);
 }
 
+void sendStatus(void)
+{
+    JsonDocument jsonDoc;
+    jsonDoc["wifi"] = preferences.getString("SSID", "N/A");
+    jsonDoc["email"] = preferences.getString("USER_EMAIL", "N/A");
+    jsonDoc["machine"] = preferences.getString("MACHINE", "N/A");
+    String jsonString;
+    serializeJson(jsonDoc, jsonString);
+    server.send(200, "application/json", jsonString);
+}
+
 void saveWifiHandler(void)
 {
-    debugln(server.arg("ssid"));
-    debugln(server.arg("password"));
-    debugln(server.arg("manual_ssid"));
     String ssid = server.arg("ssid");
     if (ssid == "OTHERS")
         ssid = server.arg("manual_ssid");
@@ -95,8 +103,6 @@ void saveWifiHandler(void)
 
 void saveCloudHandler(void)
 {
-    debugln(server.arg("user_email"));
-    debugln(server.arg("user_pass"));
     preferences.putString("USER_EMAIL", server.arg("user_email"));
     preferences.putString("USER_PASS", server.arg("user_pass"));
     streamFile("/machine.html");
@@ -104,7 +110,13 @@ void saveCloudHandler(void)
 
 void saveMachineHandler(void)
 {
-    debugln(server.arg("machine"));
     preferences.putString("MACHINE", server.arg("machine"));
     streamFile("/status.html");
+}
+
+void restartHander(void)
+{
+    server.send(200);
+    delay(1000);
+    ESP.restart();
 }

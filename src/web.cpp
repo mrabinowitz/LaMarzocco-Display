@@ -49,11 +49,12 @@ void setupWEB(void)
     // load HTML pages
     server.on("/", HTTP_GET, mainHandler);
     server.on("/ssids", HTTP_GET, sendSSID);
+    server.on("/statusData", HTTP_GET, sendStatus);
     server.on("/wifiConfig", HTTP_POST, saveWifiHandler);
     server.on("/cloudConfig", HTTP_POST, saveCloudHandler);
     server.on("/machineConfig", HTTP_POST, saveMachineHandler);
 
-    // server.on("/restart", HTTP_GET, restartHander);
+    server.on("/restart", HTTP_GET, restartHander);
 
     server.onNotFound(handleNotFound); // for unhandled cases
 

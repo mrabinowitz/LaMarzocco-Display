@@ -7,23 +7,40 @@
     <title>ShotTimer Status Page</title>
     <link rel="stylesheet" href="styles.css">
     <script>
-        function restartSetupWizard() {
-            if (confirm('Are you sure you want to restart the setup wizard? This will clear all current settings.')) {
-                // Redirect to the first setup page or clear settings
-                window.location.href = 'wifi-setup.html';
-            }
-        }
+
 
         function confirmSettings() {
             alert('Settings confirmed successfully!');
-            // In real implementation, this could save settings or navigate to next step
+            var xmlhttp;
+            if (window.XMLHttpRequest) {
+                // Code for modern browsers
+                xmlhttp = new XMLHttpRequest();
+            } else {
+                // Code for older versions of IE
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.open("get", "/restart", false);
+            xmlhttp.send();
         }
 
         function loadStatusData() {
-            // Simulated data loading - in real implementation, this would fetch from your backend
-            document.getElementById('wifi-status').value = 'Home-WiFi';
-            document.getElementById('username-status').value = 'mail@mail.com';
-            document.getElementById('machine-status').value = 'Linea Micra "Home"';
+            var xmlhttp;
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            } else {
+                // code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.open("get", "/statusData", false);
+            xmlhttp.send();
+            console.log(xmlhttp.responseText)
+            var obj = JSON.parse(xmlhttp.responseText)
+            if (obj) {
+                document.getElementById('wifi-status').value = obj.wifi;
+                document.getElementById('username-status').value = obj.email;
+                document.getElementById('machine-status').value = obj.machine;
+            }
         }
 
         window.onload = function () {
@@ -52,7 +69,7 @@
             </div>
 
             <div class="button-group">
-                <button type="button" onclick="restartSetupWizard()">Setup Wizard</button>
+                <button type="button" onclick="location.href='/'">Setup Wizard</button>
                 <button type="button" onclick="confirmSettings()">Confirm</button>
             </div>
         </form>

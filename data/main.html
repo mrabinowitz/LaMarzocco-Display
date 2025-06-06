@@ -41,15 +41,27 @@
         }
 
         function fetchSSIDs() {
-            // Simulated SSID list for demo purposes
-            const mockSSIDs = ['WiFi Network 1', 'WiFi Network 2', 'Home WiFi', 'Office WiFi'];
-            const ssidDropdown = document.getElementById('ssidDropdown');
-            mockSSIDs.forEach(ssid => {
-                const option = document.createElement('option');
-                option.value = ssid;
-                option.textContent = ssid;
-                ssidDropdown.insertBefore(option, ssidDropdown.lastChild);
-            });
+            var xmlhttp;
+            if (window.XMLHttpRequest) {
+                // code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            } else {
+                // code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.open("get", "/ssids", false);
+            xmlhttp.send();
+            console.log(xmlhttp.responseText)
+            var ssidList = JSON.parse(xmlhttp.responseText)
+            if (ssidList) {
+                const ssidDropdown = document.getElementById('ssidDropdown');
+                ssidList.forEach(ssid => {
+                    const option = document.createElement('option');
+                    option.value = ssid;
+                    option.textContent = ssid;
+                    ssidDropdown.insertBefore(option, ssidDropdown.lastChild);
+                });
+            }
         }
 
         // Call the fetchSSIDs function when page loads
