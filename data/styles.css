@@ -1,0 +1,128 @@
+body {
+    background: #fff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 500px;
+    margin: 80px auto;
+    text-align: center;
+}
+
+h2 {
+    font-size: 18px;
+    font-weight: normal;
+    margin-bottom: 30px;
+    color: #444;
+    white-space: nowrap;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+}
+
+/* Input text styling for consistent sizing */
+.input_text {
+    width: 250px;
+    padding: 8px 10px;
+    font-size: 15px;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+/* Make sure all input types are consistent */
+select,
+input[type="password"],
+input[type="text"] {
+    width: 250px;
+    padding: 8px 10px;
+    font-size: 15px;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+button {
+    width: auto;
+    min-width: 180px;
+    padding: 8px 16px;
+    background: #888;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+button:hover {
+    background: #666;
+}
+
+/* Status page specific styles */
+.status-row {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 18px;
+    width: 100%;
+    text-align: left;
+}
+
+.status-row label {
+    font-size: 16px;
+    color: #444;
+    text-align: left;
+    width: 180px;
+    margin-right: 20px;
+    flex-shrink: 0;
+}
+
+.status-row input[readonly] {
+    width: 250px;
+    padding: 8px 10px;
+    font-size: 15px;
+    border: 1px solid #bbb;
+    border-radius: 3px;
+    background-color: #f9f9f9;
+    color: #666;
+    box-sizing: border-box;
+}
+
+/* Button group for status page */
+.button-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    margin-top: 40px;
+    margin-left: 0px;
+    width: 450px;
+}
+
+.button-group button {
+    width: auto;
+    min-width: 100px;
+    padding: 10px 16px;
+    background: #888;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.button-group button:hover {
+    background: #666;
+}

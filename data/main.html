@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WiFi Setup</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        function handleSsidChange() {
+            const ssidDropdown = document.getElementById('ssidDropdown');
+            const manualInput = document.getElementById('ap_ssid');
+            if (ssidDropdown.value === 'other') {
+                manualInput.style.display = 'block';
+                manualInput.required = true;
+            } else {
+                manualInput.style.display = 'none';
+                manualInput.required = false;
+            }
+        }
+
+        function validateForm(event) {
+            // Prevent form submission
+            event.preventDefault();
+            // Clear previous error messages
+            document.getElementById('ssid-error').style.display = 'none';
+            // Get field values
+            let ssid = document.getElementById('ssidDropdown').value.trim();
+            if (ssid === 'other') {
+                ssid = document.getElementById('ap_ssid').value.trim();
+            }
+            let isValid = true;
+            // Check if SSID is empty or "Select WiFi Network"
+            if (!ssid || ssid === '') {
+                document.getElementById('ssid-error').style.display = 'block';
+                isValid = false;
+            }
+            if (isValid) {
+                document.forms['wifiConfigForm'].submit();
+            }
+        }
+
+        function fetchSSIDs() {
+            // Simulated SSID list for demo purposes
+            const mockSSIDs = ['WiFi Network 1', 'WiFi Network 2', 'Home WiFi', 'Office WiFi'];
+            const ssidDropdown = document.getElementById('ssidDropdown');
+            mockSSIDs.forEach(ssid => {
+                const option = document.createElement('option');
+                option.value = ssid;
+                option.textContent = ssid;
+                ssidDropdown.insertBefore(option, ssidDropdown.lastChild);
+            });
+        }
+
+        // Call the fetchSSIDs function when page loads
+        window.onload = function () {
+            fetchSSIDs();
+        };
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Please choose your WiFi SSID and enter the password</h2>
+        <form action='/wifiConfig' method='POST' name="wifiConfigForm">
+            <select id="ssidDropdown" class="input_text" name="ssid" onchange="handleSsidChange()">
+                <option value="">Select WiFi Network</option>
+                <option value="other">Others</option>
+            </select>
+            <input type="text" class="input_text" id="ap_ssid" name="manual_ssid" placeholder="Enter WiFi Name"
+                style="display:none;">
+            <div id="ssid-error" style="color: red; font-size: 14px; display: none; margin-top: 5px;">Please select a
+                WiFi network.</div>
+            <input type="password" class="input_text" id="ap_password" name="password" placeholder="password">
+            <button type="button" onclick="validateForm(event)">Connect</button>
+        </form>
+    </div>
+</body>
+
+</html>

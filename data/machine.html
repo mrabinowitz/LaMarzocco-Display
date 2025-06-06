@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Setup</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+
+        function validateForm(event) {
+            event.preventDefault();
+            document.getElementById('machine-error').style.display = 'none';
+            let machine = document.getElementById('machineDropdown').value.trim();
+
+            let isValid = true;
+            if (!machine || machine === '') {
+                document.getElementById('machine-error').style.display = 'block';
+                isValid = false;
+            }
+            if (isValid) {
+                document.forms['machineConfigForm'].submit();
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Please choose your Espresso machine</h2>
+        <form action='/machineConfig' method='POST' name="machineConfigForm">
+            <select id="machineDropdown" class="input_text" name="machine">
+                <option value="">Select your machine</option>
+                <option value="Linea Micra">Linea Micra "Home"</option>
+                <option value="Machine 1">Machine 1</option>
+                <option value="Machine 2">Machine 2</option>
+                <option value="Machine 3">Machine 3</option>
+                <option value="Machine 4">Machine 4</option>
+            </select>
+            <div id="machine-error" style="color: red; font-size: 14px; display: none; margin-top: 5px;">Please
+                select your machine</div>
+            <button type="button" onclick="validateForm(event)">Select</button>
+        </form>
+    </div>
+</body>
+
+</html>

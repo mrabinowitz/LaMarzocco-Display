@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShotTimer Status Page</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        function restartSetupWizard() {
+            if (confirm('Are you sure you want to restart the setup wizard? This will clear all current settings.')) {
+                // Redirect to the first setup page or clear settings
+                window.location.href = 'wifi-setup.html';
+            }
+        }
+
+        function confirmSettings() {
+            alert('Settings confirmed successfully!');
+            // In real implementation, this could save settings or navigate to next step
+        }
+
+        function loadStatusData() {
+            // Simulated data loading - in real implementation, this would fetch from your backend
+            document.getElementById('wifi-status').value = 'Home-WiFi';
+            document.getElementById('username-status').value = 'mail@mail.com';
+            document.getElementById('machine-status').value = 'Linea Micra "Home"';
+        }
+
+        window.onload = function () {
+            loadStatusData();
+        };
+    </script>
+</head>
+
+<body>
+    <div class="container">
+        <h2>ShotTimer Status Page</h2>
+        <form>
+            <div class="status-row">
+                <label for="wifi-status">WiFi</label>
+                <input type="text" id="wifi-status" readonly>
+            </div>
+
+            <div class="status-row">
+                <label for="username-status">LaMarzocco Username</label>
+                <input type="text" id="username-status" readonly>
+            </div>
+
+            <div class="status-row">
+                <label for="machine-status">LaMarzocco Machine</label>
+                <input type="text" id="machine-status" readonly>
+            </div>
+
+            <div class="button-group">
+                <button type="button" onclick="restartSetupWizard()">Setup Wizard</button>
+                <button type="button" onclick="confirmSettings()">Confirm</button>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

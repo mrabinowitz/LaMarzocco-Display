@@ -1,0 +1,10 @@
+SET(SOURCES ui_NoConnectionScreen.c
+    ui_setupWifiScreen.c
+    ui.c
+    ui_comp_hook.c
+    ui_helpers.c
+    ui_img_262687307.c
+    ui_img_battery_medium_icon_png.c
+    ui_img_x_circle_icon_png.c)
+
+add_library(ui ${SOURCES})
