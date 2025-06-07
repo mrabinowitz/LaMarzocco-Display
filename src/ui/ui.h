@@ -25,6 +25,12 @@ extern "C" {
 #include "ui_helpers.h"
 #include "ui_events.h"
 
+// SCREEN: ui_welcomeScreen
+void ui_welcomeScreen_screen_init(void);
+extern lv_obj_t *ui_welcomeScreen;
+extern lv_obj_t *ui_welcomeLabel;
+// CUSTOM VARIABLES
+
 // SCREEN: ui_NoConnectionScreen
 void ui_NoConnectionScreen_screen_init(void);
 extern lv_obj_t *ui_NoConnectionScreen;
@@ -48,6 +54,16 @@ extern lv_obj_t *ui_SSIDLabel;
 extern lv_obj_t *ui_URLLabel;
 // CUSTOM VARIABLES
 
+// SCREEN: ui_mainScreen
+void ui_mainScreen_screen_init(void);
+extern lv_obj_t *ui_mainScreen;
+extern lv_obj_t *ui_WifiImage;
+extern lv_obj_t *ui_BatMediumImage2;
+extern lv_obj_t *ui_powerButton;
+extern lv_obj_t *ui_steamButton;
+extern lv_obj_t *ui_timeLabel;
+// CUSTOM VARIABLES
+
 // EVENTS
 extern lv_obj_t *ui____initial_actions0;
 
@@ -55,6 +71,9 @@ extern lv_obj_t *ui____initial_actions0;
 LV_IMG_DECLARE( ui_img_262687307);   // assets/Wifi Slash Icon (2).png
 LV_IMG_DECLARE( ui_img_battery_medium_icon_png);   // assets/Battery Medium Icon.png
 LV_IMG_DECLARE( ui_img_x_circle_icon_png);   // assets/X Circle Icon.png
+LV_IMG_DECLARE( ui_img_1794397354);   // assets/WiFi Icon (2).png
+LV_IMG_DECLARE( ui_img_power_png);   // assets/power.png
+LV_IMG_DECLARE( ui_img_steam_png);   // assets/steam.png
 
 // UI INIT
 void ui_init(void);

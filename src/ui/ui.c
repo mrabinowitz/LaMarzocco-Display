@@ -9,6 +9,13 @@
 ///////////////////// VARIABLES ////////////////////
 
 
+// SCREEN: ui_welcomeScreen
+void ui_welcomeScreen_screen_init(void);
+lv_obj_t *ui_welcomeScreen;
+lv_obj_t *ui_welcomeLabel;
+// CUSTOM VARIABLES
+
+
 // SCREEN: ui_NoConnectionScreen
 void ui_NoConnectionScreen_screen_init(void);
 lv_obj_t *ui_NoConnectionScreen;
@@ -31,6 +38,17 @@ lv_obj_t *ui_NoWifiLabel1;
 lv_obj_t *ui_Spinner1;
 lv_obj_t *ui_SSIDLabel;
 lv_obj_t *ui_URLLabel;
+// CUSTOM VARIABLES
+
+
+// SCREEN: ui_mainScreen
+void ui_mainScreen_screen_init(void);
+lv_obj_t *ui_mainScreen;
+lv_obj_t *ui_WifiImage;
+lv_obj_t *ui_BatMediumImage2;
+lv_obj_t *ui_powerButton;
+lv_obj_t *ui_steamButton;
+lv_obj_t *ui_timeLabel;
 // CUSTOM VARIABLES
 
 // EVENTS
@@ -64,8 +82,10 @@ void ui_init( void )
 lv_disp_t *dispp = lv_disp_get_default();
 lv_theme_t *theme = lv_theme_default_init(dispp, lv_palette_main(LV_PALETTE_BLUE), lv_palette_main(LV_PALETTE_RED), false, LV_FONT_DEFAULT);
 lv_disp_set_theme(dispp, theme);
+ui_welcomeScreen_screen_init();
 ui_NoConnectionScreen_screen_init();
 ui_setupWifiScreen_screen_init();
+ui_mainScreen_screen_init();
 ui____initial_actions0 = lv_obj_create(NULL);
-lv_disp_load_scr( ui_NoConnectionScreen);
+lv_disp_load_scr( ui_welcomeScreen);
 }
