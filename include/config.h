@@ -13,6 +13,7 @@
 
 // Captive portal redirection
 #define REDIRECT_URL "http://192.168.4.1/"
+static constexpr const char *NTP_SERVER = "pool.ntp.org";
 
 #define uS_TO_S_FACTOR 1000000ULL
 

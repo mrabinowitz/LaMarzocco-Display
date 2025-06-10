@@ -62,12 +62,12 @@ lv_obj_set_style_shadow_color(ui_steamButton, lv_color_hex(0xFFFFFF), LV_PART_MA
 lv_obj_set_style_shadow_opa(ui_steamButton, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_timeLabel = lv_label_create(ui_mainScreen);
-lv_obj_set_width( ui_timeLabel, LV_SIZE_CONTENT);  /// 1
-lv_obj_set_height( ui_timeLabel, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_width( ui_timeLabel, 84);
+lv_obj_set_height( ui_timeLabel, 27);
 lv_obj_set_x( ui_timeLabel, -214 );
 lv_obj_set_y( ui_timeLabel, -94 );
 lv_obj_set_align( ui_timeLabel, LV_ALIGN_CENTER );
-lv_label_set_text(ui_timeLabel,"12 : 00");
+lv_label_set_text(ui_timeLabel,"");
 lv_obj_set_style_text_font(ui_timeLabel, &lv_font_montserrat_26, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 

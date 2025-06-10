@@ -6,11 +6,11 @@
 #include "web.h"
 #include <WiFi.h>
 #include "config.h"
+#include "update_screen.h"
 
 Preferences preferences;
 
 LilyGo_Class amoled;
-
 SemaphoreHandle_t gui_mutex;
 void Task_LVGL(void *pvParameters);
 
@@ -82,7 +82,8 @@ void setup()
                           NULL,
                           0);
 
-  delay(1000);
+  configTime(GMT_OFFSET_SEC, DAYLIGHT_OFFSET_SEC, NTP_SERVER);
+  delay(500);
 
   String ssid = preferences.getString("SSID", "");
   String pass = preferences.getString("PASS", "");
@@ -110,6 +111,7 @@ void setup()
 
 void loop()
 {
+  updateDateTime();
 }
 
 void Task_LVGL(void *pvParameters)
