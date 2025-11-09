@@ -11,10 +11,10 @@
         function validateForm(event) {
             event.preventDefault();
             document.getElementById('machine-error').style.display = 'none';
-            let machine = document.getElementById('machineDropdown').value.trim();
+            let serialNumber = document.getElementById('serialNumberInput').value.trim();
 
             let isValid = true;
-            if (!machine || machine === '') {
+            if (!serialNumber || serialNumber === '') {
                 document.getElementById('machine-error').style.display = 'block';
                 isValid = false;
             }
@@ -27,18 +27,12 @@
 
 <body>
     <div class="container">
-        <h2>Please choose your Espresso machine</h2>
+        <h2>Please enter your serial number</h2>
         <form action='/machineConfig' method='POST' name="machineConfigForm">
-            <select id="machineDropdown" class="input_text" name="machine">
-                <option value="">Select your machine</option>
-                <option value="Linea Micra">Linea Micra "Home"</option>
-                <option value="Machine 1">Machine 1</option>
-                <option value="Machine 2">Machine 2</option>
-                <option value="Machine 3">Machine 3</option>
-                <option value="Machine 4">Machine 4</option>
-            </select>
+            <input type="text" id="serialNumberInput" class="input_text" name="machine"
+                placeholder="Enter serial number">
             <div id="machine-error" style="color: red; font-size: 14px; display: none; margin-top: 5px;">Please
-                select your machine</div>
+                enter your serial number</div>
             <button type="button" onclick="validateForm(event)">Select</button>
         </form>
     </div>

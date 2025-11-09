@@ -46,6 +46,7 @@ void ui_mainScreen_screen_init(void);
 lv_obj_t *ui_mainScreen;
 lv_obj_t *ui_WifiImage;
 lv_obj_t *ui_BatMediumImage2;
+void ui_event_powerButton( lv_event_t * e);
 lv_obj_t *ui_powerButton;
 lv_obj_t *ui_steamButton;
 lv_obj_t *ui_timeLabel;
@@ -55,6 +56,7 @@ lv_obj_t *ui_timeLabel;
 lv_obj_t *ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
+const lv_img_dsc_t *ui_imgset_logo_[1] = {&ui_img_logo_2_png};
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
 #if LV_COLOR_DEPTH != 16
@@ -72,6 +74,14 @@ void ui_event_WifiSetupBtn( lv_event_t * e) {
 
 if ( event_code == LV_EVENT_CLICKED) {
       wifiSetup( e );
+}
+}
+
+void ui_event_powerButton( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+if ( event_code == LV_EVENT_CLICKED) {
+      turnOnMachine( e );
 }
 }
 

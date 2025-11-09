@@ -11,7 +11,7 @@ ui_setupWifiScreen = lv_obj_create(NULL);
 lv_obj_clear_flag( ui_setupWifiScreen, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_NoWifiImage1 = lv_img_create(ui_setupWifiScreen);
-lv_img_set_src(ui_NoWifiImage1, &ui_img_262687307);
+lv_img_set_src(ui_NoWifiImage1, &ui_img_nowifi_png);
 lv_obj_set_width( ui_NoWifiImage1, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_NoWifiImage1, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_x( ui_NoWifiImage1, 156 );
@@ -21,7 +21,7 @@ lv_obj_add_flag( ui_NoWifiImage1, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
 lv_obj_clear_flag( ui_NoWifiImage1, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_BatMediumImage1 = lv_img_create(ui_setupWifiScreen);
-lv_img_set_src(ui_BatMediumImage1, &ui_img_battery_medium_icon_png);
+lv_img_set_src(ui_BatMediumImage1, &ui_img_batterymedium_png);
 lv_obj_set_width( ui_BatMediumImage1, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_BatMediumImage1, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_x( ui_BatMediumImage1, 215 );

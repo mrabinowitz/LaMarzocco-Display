@@ -13,7 +13,7 @@ lv_obj_set_style_bg_color(ui_mainScreen, lv_color_hex(0xFFFFFF), LV_PART_MAIN | 
 lv_obj_set_style_bg_opa(ui_mainScreen, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_WifiImage = lv_img_create(ui_mainScreen);
-lv_img_set_src(ui_WifiImage, &ui_img_1794397354);
+lv_img_set_src(ui_WifiImage, &ui_img_wifi_png);
 lv_obj_set_width( ui_WifiImage, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_WifiImage, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_x( ui_WifiImage, 156 );
@@ -23,7 +23,7 @@ lv_obj_add_flag( ui_WifiImage, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
 lv_obj_clear_flag( ui_WifiImage, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_BatMediumImage2 = lv_img_create(ui_mainScreen);
-lv_img_set_src(ui_BatMediumImage2, &ui_img_battery_medium_icon_png);
+lv_img_set_src(ui_BatMediumImage2, &ui_img_batterymedium_png);
 lv_obj_set_width( ui_BatMediumImage2, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_BatMediumImage2, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_x( ui_BatMediumImage2, 215 );
@@ -70,5 +70,6 @@ lv_obj_set_align( ui_timeLabel, LV_ALIGN_CENTER );
 lv_label_set_text(ui_timeLabel,"");
 lv_obj_set_style_text_font(ui_timeLabel, &lv_font_montserrat_26, LV_PART_MAIN| LV_STATE_DEFAULT);
 
+lv_obj_add_event_cb(ui_powerButton, ui_event_powerButton, LV_EVENT_ALL, NULL);
 
 }

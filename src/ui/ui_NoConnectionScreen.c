@@ -11,7 +11,7 @@ ui_NoConnectionScreen = lv_obj_create(NULL);
 lv_obj_clear_flag( ui_NoConnectionScreen, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_NoWifiImage = lv_img_create(ui_NoConnectionScreen);
-lv_img_set_src(ui_NoWifiImage, &ui_img_262687307);
+lv_img_set_src(ui_NoWifiImage, &ui_img_nowifi_png);
 lv_obj_set_width( ui_NoWifiImage, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_NoWifiImage, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_x( ui_NoWifiImage, 156 );
@@ -21,7 +21,7 @@ lv_obj_add_flag( ui_NoWifiImage, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
 lv_obj_clear_flag( ui_NoWifiImage, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_BatMediumImage = lv_img_create(ui_NoConnectionScreen);
-lv_img_set_src(ui_BatMediumImage, &ui_img_battery_medium_icon_png);
+lv_img_set_src(ui_BatMediumImage, &ui_img_batterymedium_png);
 lv_obj_set_width( ui_BatMediumImage, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_BatMediumImage, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_x( ui_BatMediumImage, 215 );
@@ -31,7 +31,7 @@ lv_obj_add_flag( ui_BatMediumImage, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
 lv_obj_clear_flag( ui_BatMediumImage, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_CrossImage = lv_img_create(ui_NoConnectionScreen);
-lv_img_set_src(ui_CrossImage, &ui_img_x_circle_icon_png);
+lv_img_set_src(ui_CrossImage, &ui_img_cross_png);
 lv_obj_set_width( ui_CrossImage, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_CrossImage, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_x( ui_CrossImage, -195 );

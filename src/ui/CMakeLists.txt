@@ -5,11 +5,12 @@ SET(SOURCES ui_welcomeScreen.c
     ui.c
     ui_comp_hook.c
     ui_helpers.c
-    ui_img_262687307.c
-    ui_img_battery_medium_icon_png.c
-    ui_img_x_circle_icon_png.c
-    ui_img_1794397354.c
+    ui_img_nowifi_png.c
+    ui_img_batterymedium_png.c
+    ui_img_cross_png.c
+    ui_img_wifi_png.c
     ui_img_power_png.c
-    ui_img_steam_png.c)
+    ui_img_steam_png.c
+    ui_img_logo_2_png.c)
 
 add_library(ui ${SOURCES})

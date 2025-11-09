@@ -59,6 +59,7 @@ void ui_mainScreen_screen_init(void);
 extern lv_obj_t *ui_mainScreen;
 extern lv_obj_t *ui_WifiImage;
 extern lv_obj_t *ui_BatMediumImage2;
+void ui_event_powerButton( lv_event_t * e);
 extern lv_obj_t *ui_powerButton;
 extern lv_obj_t *ui_steamButton;
 extern lv_obj_t *ui_timeLabel;
@@ -68,12 +69,13 @@ extern lv_obj_t *ui_timeLabel;
 extern lv_obj_t *ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
-LV_IMG_DECLARE( ui_img_262687307);   // assets/Wifi Slash Icon (2).png
-LV_IMG_DECLARE( ui_img_battery_medium_icon_png);   // assets/Battery Medium Icon.png
-LV_IMG_DECLARE( ui_img_x_circle_icon_png);   // assets/X Circle Icon.png
-LV_IMG_DECLARE( ui_img_1794397354);   // assets/WiFi Icon (2).png
+LV_IMG_DECLARE( ui_img_nowifi_png);   // assets/noWifi.png
+LV_IMG_DECLARE( ui_img_batterymedium_png);   // assets/batteryMedium.png
+LV_IMG_DECLARE( ui_img_cross_png);   // assets/cross.png
+LV_IMG_DECLARE( ui_img_wifi_png);   // assets/wifi.png
 LV_IMG_DECLARE( ui_img_power_png);   // assets/power.png
 LV_IMG_DECLARE( ui_img_steam_png);   // assets/steam.png
+LV_IMG_DECLARE( ui_img_logo_2_png);   // assets/logo_2.png
 
 // UI INIT
 void ui_init(void);
