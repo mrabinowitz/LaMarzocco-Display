@@ -5,6 +5,7 @@
 #include <ArduinoJson.h>
 #include "config.h"
 #include "Preferences.h"
+#include "lamarzocco_auth.h"
 #include <set>
 
 extern Preferences preferences;
@@ -111,6 +112,25 @@ void saveCloudHandler(void)
 void saveMachineHandler(void)
 {
     preferences.putString("MACHINE", server.arg("machine"));
+    
+    // Generate installation key if not exists
+    InstallationKey key;
+    if (!LaMarzoccoAuth::load_installation_key(preferences, key)) {
+        debugln("Generating new installation key...");
+        String installation_id = LaMarzoccoAuth::generate_uuid();
+        if (LaMarzoccoAuth::generate_installation_key(installation_id, key)) {
+            if (LaMarzoccoAuth::save_installation_key(preferences, key)) {
+                debugln("Installation key generated and saved");
+            } else {
+                debugln("Failed to save installation key");
+            }
+        } else {
+            debugln("Failed to generate installation key");
+        }
+    } else {
+        debugln("Installation key already exists");
+    }
+    
     streamFile("/status.html");
 }
 

@@ -35,19 +35,19 @@ extern lv_obj_t *ui_welcomeLabel;
 void ui_NoConnectionScreen_screen_init(void);
 extern lv_obj_t *ui_NoConnectionScreen;
 extern lv_obj_t *ui_NoWifiImage;
-extern lv_obj_t *ui_BatMediumImage;
 extern lv_obj_t *ui_CrossImage;
-extern lv_obj_t *ui_NoWifiLabel;
+extern lv_obj_t *ui_ErrorLabel;
 void ui_event_WifiSetupBtn( lv_event_t * e);
 extern lv_obj_t *ui_WifiSetupBtn;
 extern lv_obj_t *ui_WifiSetupLabel;
+extern lv_obj_t *ui_BatImage;
 // CUSTOM VARIABLES
 
 // SCREEN: ui_setupWifiScreen
 void ui_setupWifiScreen_screen_init(void);
 extern lv_obj_t *ui_setupWifiScreen;
 extern lv_obj_t *ui_NoWifiImage1;
-extern lv_obj_t *ui_BatMediumImage1;
+extern lv_obj_t *ui_BatImage1;
 extern lv_obj_t *ui_NoWifiLabel1;
 extern lv_obj_t *ui_Spinner1;
 extern lv_obj_t *ui_SSIDLabel;
@@ -58,7 +58,7 @@ extern lv_obj_t *ui_URLLabel;
 void ui_mainScreen_screen_init(void);
 extern lv_obj_t *ui_mainScreen;
 extern lv_obj_t *ui_WifiImage;
-extern lv_obj_t *ui_BatMediumImage2;
+extern lv_obj_t *ui_BatImage2;
 void ui_event_powerButton( lv_event_t * e);
 extern lv_obj_t *ui_powerButton;
 extern lv_obj_t *ui_steamButton;
@@ -69,13 +69,17 @@ extern lv_obj_t *ui_timeLabel;
 extern lv_obj_t *ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
-LV_IMG_DECLARE( ui_img_nowifi_png);   // assets/noWifi.png
-LV_IMG_DECLARE( ui_img_batterymedium_png);   // assets/batteryMedium.png
+LV_IMG_DECLARE( ui_img_wifi0_png);   // assets/wifi0.png
 LV_IMG_DECLARE( ui_img_cross_png);   // assets/cross.png
-LV_IMG_DECLARE( ui_img_wifi_png);   // assets/wifi.png
+LV_IMG_DECLARE( ui_img_battery1_png);   // assets/battery1.png
+LV_IMG_DECLARE( ui_img_battery0_png);   // assets/battery0.png
 LV_IMG_DECLARE( ui_img_power_png);   // assets/power.png
 LV_IMG_DECLARE( ui_img_steam_png);   // assets/steam.png
-LV_IMG_DECLARE( ui_img_logo_2_png);   // assets/logo_2.png
+LV_IMG_DECLARE( ui_img_battery2_png);   // assets/battery2.png
+LV_IMG_DECLARE( ui_img_battery3_png);   // assets/battery3.png
+LV_IMG_DECLARE( ui_img_wifi1_png);   // assets/wifi1.png
+LV_IMG_DECLARE( ui_img_wifi2_png);   // assets/wifi2.png
+LV_IMG_DECLARE( ui_img_wifi3_png);   // assets/wifi3.png
 
 // UI INIT
 void ui_init(void);

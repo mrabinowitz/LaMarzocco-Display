@@ -11,24 +11,14 @@ ui_NoConnectionScreen = lv_obj_create(NULL);
 lv_obj_clear_flag( ui_NoConnectionScreen, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_NoWifiImage = lv_img_create(ui_NoConnectionScreen);
-lv_img_set_src(ui_NoWifiImage, &ui_img_nowifi_png);
+lv_img_set_src(ui_NoWifiImage, &ui_img_wifi0_png);
 lv_obj_set_width( ui_NoWifiImage, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_NoWifiImage, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_x( ui_NoWifiImage, 156 );
 lv_obj_set_y( ui_NoWifiImage, -93 );
 lv_obj_set_align( ui_NoWifiImage, LV_ALIGN_CENTER );
-lv_obj_add_flag( ui_NoWifiImage, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
+lv_obj_add_flag( ui_NoWifiImage, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
 lv_obj_clear_flag( ui_NoWifiImage, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
-
-ui_BatMediumImage = lv_img_create(ui_NoConnectionScreen);
-lv_img_set_src(ui_BatMediumImage, &ui_img_batterymedium_png);
-lv_obj_set_width( ui_BatMediumImage, LV_SIZE_CONTENT);  /// 1
-lv_obj_set_height( ui_BatMediumImage, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_BatMediumImage, 215 );
-lv_obj_set_y( ui_BatMediumImage, -92 );
-lv_obj_set_align( ui_BatMediumImage, LV_ALIGN_CENTER );
-lv_obj_add_flag( ui_BatMediumImage, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
-lv_obj_clear_flag( ui_BatMediumImage, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_CrossImage = lv_img_create(ui_NoConnectionScreen);
 lv_img_set_src(ui_CrossImage, &ui_img_cross_png);
@@ -40,14 +30,14 @@ lv_obj_set_align( ui_CrossImage, LV_ALIGN_CENTER );
 lv_obj_add_flag( ui_CrossImage, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
 lv_obj_clear_flag( ui_CrossImage, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
-ui_NoWifiLabel = lv_label_create(ui_NoConnectionScreen);
-lv_obj_set_width( ui_NoWifiLabel, LV_SIZE_CONTENT);  /// 1
-lv_obj_set_height( ui_NoWifiLabel, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_NoWifiLabel, 0 );
-lv_obj_set_y( ui_NoWifiLabel, -12 );
-lv_obj_set_align( ui_NoWifiLabel, LV_ALIGN_CENTER );
-lv_label_set_text(ui_NoWifiLabel,"No WiFi Connection \nPlease restart Wifi Setup");
-lv_obj_set_style_text_font(ui_NoWifiLabel, &lv_font_montserrat_22, LV_PART_MAIN| LV_STATE_DEFAULT);
+ui_ErrorLabel = lv_label_create(ui_NoConnectionScreen);
+lv_obj_set_width( ui_ErrorLabel, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_ErrorLabel, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_x( ui_ErrorLabel, 0 );
+lv_obj_set_y( ui_ErrorLabel, -12 );
+lv_obj_set_align( ui_ErrorLabel, LV_ALIGN_CENTER );
+lv_label_set_text(ui_ErrorLabel,"No WiFi Connection \nPlease restart Wifi Setup");
+lv_obj_set_style_text_font(ui_ErrorLabel, &lv_font_montserrat_22, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_WifiSetupBtn = lv_btn_create(ui_NoConnectionScreen);
 lv_obj_set_width( ui_WifiSetupBtn, 151);
@@ -75,6 +65,16 @@ lv_label_set_text(ui_WifiSetupLabel,"Start WiFi Setup");
 lv_obj_set_style_text_color(ui_WifiSetupLabel, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT );
 lv_obj_set_style_text_opa(ui_WifiSetupLabel, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
 lv_obj_set_style_text_font(ui_WifiSetupLabel, &lv_font_montserrat_16, LV_PART_MAIN| LV_STATE_DEFAULT);
+
+ui_BatImage = lv_img_create(ui_NoConnectionScreen);
+lv_img_set_src(ui_BatImage, &ui_img_battery1_png);
+lv_obj_set_width( ui_BatImage, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_BatImage, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_x( ui_BatImage, 215 );
+lv_obj_set_y( ui_BatImage, -92 );
+lv_obj_set_align( ui_BatImage, LV_ALIGN_CENTER );
+lv_obj_add_flag( ui_BatImage, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
+lv_obj_clear_flag( ui_BatImage, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 lv_obj_add_event_cb(ui_WifiSetupBtn, ui_event_WifiSetupBtn, LV_EVENT_ALL, NULL);
 

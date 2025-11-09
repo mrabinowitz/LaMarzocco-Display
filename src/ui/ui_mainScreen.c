@@ -13,24 +13,24 @@ lv_obj_set_style_bg_color(ui_mainScreen, lv_color_hex(0xFFFFFF), LV_PART_MAIN | 
 lv_obj_set_style_bg_opa(ui_mainScreen, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_WifiImage = lv_img_create(ui_mainScreen);
-lv_img_set_src(ui_WifiImage, &ui_img_wifi_png);
+lv_img_set_src(ui_WifiImage, &ui_img_wifi0_png);
 lv_obj_set_width( ui_WifiImage, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_WifiImage, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_x( ui_WifiImage, 156 );
-lv_obj_set_y( ui_WifiImage, -93 );
+lv_obj_set_y( ui_WifiImage, -94 );
 lv_obj_set_align( ui_WifiImage, LV_ALIGN_CENTER );
-lv_obj_add_flag( ui_WifiImage, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
+lv_obj_add_flag( ui_WifiImage, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
 lv_obj_clear_flag( ui_WifiImage, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
-ui_BatMediumImage2 = lv_img_create(ui_mainScreen);
-lv_img_set_src(ui_BatMediumImage2, &ui_img_batterymedium_png);
-lv_obj_set_width( ui_BatMediumImage2, LV_SIZE_CONTENT);  /// 1
-lv_obj_set_height( ui_BatMediumImage2, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_BatMediumImage2, 215 );
-lv_obj_set_y( ui_BatMediumImage2, -92 );
-lv_obj_set_align( ui_BatMediumImage2, LV_ALIGN_CENTER );
-lv_obj_add_flag( ui_BatMediumImage2, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
-lv_obj_clear_flag( ui_BatMediumImage2, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+ui_BatImage2 = lv_img_create(ui_mainScreen);
+lv_img_set_src(ui_BatImage2, &ui_img_battery0_png);
+lv_obj_set_width( ui_BatImage2, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_BatImage2, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_x( ui_BatImage2, 215 );
+lv_obj_set_y( ui_BatImage2, -92 );
+lv_obj_set_align( ui_BatImage2, LV_ALIGN_CENTER );
+lv_obj_add_flag( ui_BatImage2, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
+lv_obj_clear_flag( ui_BatImage2, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
 
 ui_powerButton = lv_btn_create(ui_mainScreen);
 lv_obj_set_width( ui_powerButton, 78);
@@ -62,10 +62,10 @@ lv_obj_set_style_shadow_color(ui_steamButton, lv_color_hex(0xFFFFFF), LV_PART_MA
 lv_obj_set_style_shadow_opa(ui_steamButton, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_timeLabel = lv_label_create(ui_mainScreen);
-lv_obj_set_width( ui_timeLabel, 84);
+lv_obj_set_width( ui_timeLabel, 92);
 lv_obj_set_height( ui_timeLabel, 27);
-lv_obj_set_x( ui_timeLabel, -214 );
-lv_obj_set_y( ui_timeLabel, -94 );
+lv_obj_set_x( ui_timeLabel, -208 );
+lv_obj_set_y( ui_timeLabel, -95 );
 lv_obj_set_align( ui_timeLabel, LV_ALIGN_CENTER );
 lv_label_set_text(ui_timeLabel,"");
 lv_obj_set_style_text_font(ui_timeLabel, &lv_font_montserrat_26, LV_PART_MAIN| LV_STATE_DEFAULT);
