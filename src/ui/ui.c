@@ -50,6 +50,10 @@ void ui_event_powerButton( lv_event_t * e);
 lv_obj_t *ui_powerButton;
 lv_obj_t *ui_steamButton;
 lv_obj_t *ui_timeLabel;
+lv_obj_t *ui_CoffeeArc;
+lv_obj_t *ui_CoffeeImage;
+lv_obj_t *ui_SteamImage;
+lv_obj_t *ui_SteamArc;
 // CUSTOM VARIABLES
 
 // EVENTS

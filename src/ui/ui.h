@@ -63,6 +63,10 @@ void ui_event_powerButton( lv_event_t * e);
 extern lv_obj_t *ui_powerButton;
 extern lv_obj_t *ui_steamButton;
 extern lv_obj_t *ui_timeLabel;
+extern lv_obj_t *ui_CoffeeArc;
+extern lv_obj_t *ui_CoffeeImage;
+extern lv_obj_t *ui_SteamImage;
+extern lv_obj_t *ui_SteamArc;
 // CUSTOM VARIABLES
 
 // EVENTS
@@ -75,6 +79,8 @@ LV_IMG_DECLARE( ui_img_battery1_png);   // assets/battery1.png
 LV_IMG_DECLARE( ui_img_battery0_png);   // assets/battery0.png
 LV_IMG_DECLARE( ui_img_power_png);   // assets/power.png
 LV_IMG_DECLARE( ui_img_steam_png);   // assets/steam.png
+LV_IMG_DECLARE( ui_img_coffee_png);   // assets/coffee.png
+LV_IMG_DECLARE( ui_img_wind_png);   // assets/wind.png
 LV_IMG_DECLARE( ui_img_battery2_png);   // assets/battery2.png
 LV_IMG_DECLARE( ui_img_battery3_png);   // assets/battery3.png
 LV_IMG_DECLARE( ui_img_wifi1_png);   // assets/wifi1.png

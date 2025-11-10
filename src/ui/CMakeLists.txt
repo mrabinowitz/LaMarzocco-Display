@@ -11,6 +11,8 @@ SET(SOURCES ui_welcomeScreen.c
     ui_img_battery0_png.c
     ui_img_power_png.c
     ui_img_steam_png.c
+    ui_img_coffee_png.c
+    ui_img_wind_png.c
     ui_img_battery2_png.c
     ui_img_battery3_png.c
     ui_img_wifi1_png.c
