@@ -11,6 +11,7 @@
 #include "lamarzocco_websocket.h"
 #include "lamarzocco_machine.h"
 #include "lamarzocco_auth.h"
+#include "boiler_display.h"
 
 Preferences preferences;
 LaMarzoccoClient* g_client = nullptr;
@@ -247,6 +248,10 @@ void Task_LVGL(void *pvParameters)
 {
   beginLvglHelper(amoled);
   ui_init();
+  
+  // Initialize boiler display system after UI is ready
+  boiler_display_init();
+  
   // Main LVGL loop
   while (1)
   {

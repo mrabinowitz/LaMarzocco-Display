@@ -1,5 +1,6 @@
 #include "lamarzocco_machine.h"
 #include "config.h"
+#include "boiler_display.h"
 #include <ArduinoJson.h>
 
 LaMarzoccoMachine* LaMarzoccoMachine::_instance = nullptr;
@@ -12,19 +13,14 @@ LaMarzoccoMachine::LaMarzoccoMachine(LaMarzoccoClient& client, LaMarzoccoWebSock
 
 void LaMarzoccoMachine::_websocket_message_handler(const String& message) {
     if (_instance) {
-        // Always print incoming message to serial
+        // Parse JSON message with large buffer for La Marzocco messages (can be 2-3KB)
+        JsonDocument doc;
+        
         Serial.println("\n========== WEBSOCKET MESSAGE RECEIVED ==========");
         Serial.print("Message length: ");
         Serial.print(message.length());
         Serial.println(" bytes");
-        Serial.println(message);
-        Serial.println("===============================================\n");
         
-        // Parse JSON message with large buffer for La Marzocco messages (can be 2-3KB)
-        // Allocate 4KB to handle large messages with all widgets
-        JsonDocument doc;
-        
-        Serial.println("Parsing JSON...");
         DeserializationError error = deserializeJson(doc, message);
         
         if (error) {
@@ -41,44 +37,103 @@ void LaMarzoccoMachine::_websocket_message_handler(const String& message) {
         
         Serial.println("✓ JSON parsed successfully");
         
-        // Look for power/mode information in widgets array
+        // Variables to store extracted data
+        const char* machine_status = nullptr;
+        const char* machine_mode = nullptr;
+        const char* coffee_boiler_status = nullptr;
+        int64_t coffee_ready_time = 0;
+        const char* steam_boiler_status = nullptr;
+        int64_t steam_ready_time = 0;
+        
+        // Parse widgets array to extract boiler and machine status
         if (doc.containsKey("widgets")) {
-            Serial.println("Found 'widgets' key");
             JsonArray widgets = doc["widgets"].as<JsonArray>();
             Serial.print("Widgets count: ");
             Serial.println(widgets.size());
             
             for (JsonVariant widget : widgets) {
                 const char* code = widget["code"];
-                if (code && strcmp(code, "CMMachineStatus") == 0) {
+                if (!code) continue;
+                
+                // Extract machine status
+                if (strcmp(code, "CMMachineStatus") == 0) {
                     Serial.println("✓ Found CMMachineStatus widget");
-                    
                     JsonObject output = widget["output"].as<JsonObject>();
                     
-                    // Get status
-                    const char* status = output["status"];
-                    if (status) {
-                        _instance->_power_state = (strcmp(status, "PoweredOn") == 0);
+                    machine_status = output["status"];
+                    machine_mode = output["mode"];
+                    
+                    if (machine_status) {
+                        _instance->_power_state = (strcmp(machine_status, "PoweredOn") == 0);
                         Serial.print("📊 Machine status: ");
-                        Serial.println(status);
-                        Serial.print("🔋 Power state: ");
-                        Serial.println(_instance->_power_state ? "ON" : "OFF");
-                    } else {
-                        Serial.println("⚠ Status field not found");
+                        Serial.print(machine_status);
+                        if (machine_mode) {
+                            Serial.print(" (mode: ");
+                            Serial.print(machine_mode);
+                            Serial.print(")");
+                        }
+                        Serial.println();
+                    }
+                }
+                // Extract coffee boiler status and ready time
+                else if (strcmp(code, "CMCoffeeBoiler") == 0) {
+                    Serial.println("☕ Found CMCoffeeBoiler widget");
+                    JsonObject output = widget["output"].as<JsonObject>();
+                    
+                    coffee_boiler_status = output["status"];
+                    if (output.containsKey("readyStartTime") && !output["readyStartTime"].isNull()) {
+                        coffee_ready_time = output["readyStartTime"].as<long long>();
                     }
                     
-                    // Get mode
-                    const char* mode = output["mode"];
-                    if (mode) {
-                        Serial.print("⚙️  Machine mode: ");
-                        Serial.println(mode);
+                    Serial.print("  Status: ");
+                    Serial.print(coffee_boiler_status ? coffee_boiler_status : "null");
+                    Serial.print(", ReadyStartTime: ");
+                    Serial.println((long long)coffee_ready_time);
+                }
+                // Extract steam boiler status and ready time
+                else if (strcmp(code, "CMSteamBoilerLevel") == 0) {
+                    Serial.println("♨️  Found CMSteamBoilerLevel widget");
+                    JsonObject output = widget["output"].as<JsonObject>();
+                    
+                    steam_boiler_status = output["status"];
+                    if (output.containsKey("readyStartTime") && !output["readyStartTime"].isNull()) {
+                        steam_ready_time = output["readyStartTime"].as<long long>();
                     }
                     
-                    break;
+                    Serial.print("  Status: ");
+                    Serial.print(steam_boiler_status ? steam_boiler_status : "null");
+                    Serial.print(", ReadyStartTime: ");
+                    Serial.println((long long)steam_ready_time);
+                }
+            }
+        }
+        
+        // Update boiler displays if we have machine status
+        if (machine_status) {
+            Serial.println("\n🔄 Updating boiler displays...");
+            
+            // If machine is OFF or StandBy, use that for both boilers
+            if (strcmp(machine_status, "Off") == 0 || strcmp(machine_status, "StandBy") == 0) {
+                boiler_display_update(BOILER_COFFEE, machine_status, 
+                                     coffee_boiler_status ? coffee_boiler_status : "Off", 
+                                     coffee_ready_time);
+                boiler_display_update(BOILER_STEAM, machine_status, 
+                                     steam_boiler_status ? steam_boiler_status : "Off", 
+                                     steam_ready_time);
+            } else {
+                // Machine is ON, update each boiler independently
+                if (coffee_boiler_status) {
+                    boiler_display_update(BOILER_COFFEE, machine_status, 
+                                         coffee_boiler_status, coffee_ready_time);
+                }
+                
+                if (steam_boiler_status) {
+                    boiler_display_update(BOILER_STEAM, machine_status, 
+                                         steam_boiler_status, steam_ready_time);
                 }
             }
         } else {
-            Serial.println("⚠ No 'widgets' key found in JSON");
+            Serial.println("⚠ No machine status found, skipping boiler updates");
         }
         
         // Check for command responses
@@ -99,7 +154,7 @@ void LaMarzoccoMachine::_websocket_message_handler(const String& message) {
             }
         }
         
-        Serial.println();
+        Serial.println("===============================================\n");
     }
 }
 

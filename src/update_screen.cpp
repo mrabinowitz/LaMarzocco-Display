@@ -176,31 +176,104 @@ void showNoConnectionScreen(const char* errorMessage)
     }
 }
 
-// WiFi connection monitoring
-// Checks if WiFi is connected, and redirects to NoConnectionScreen if disconnected
+// WiFi connection monitoring with retry mechanism
+// Checks if WiFi is connected, attempts reconnection with retries before showing error
 static bool wasConnected = false;
 static unsigned long lastWiFiCheck = 0;
-static const unsigned long WIFI_CHECK_INTERVAL = 5000;  // Check every 5 seconds
+static unsigned long reconnectStartTime = 0;
+static unsigned long waitUntilTime = 0;
+static const unsigned long WIFI_CHECK_INTERVAL = 5000;       // Check every 5 seconds
+static const unsigned long WIFI_RECONNECT_DELAY = 30000;     // 30 seconds between retry attempts
+static const unsigned long WIFI_CONNECT_TIMEOUT = 15000;     // 15 seconds to wait for connection
+static const int MAX_RECONNECT_ATTEMPTS = 5;                 // Maximum retry attempts
+static int reconnectAttempts = 0;
+static bool isReconnecting = false;
+static bool waitingForConnection = false;
 
 void checkWiFiConnection(void)
 {
-    // Only check every WIFI_CHECK_INTERVAL milliseconds to avoid excessive checks
-    if (millis() - lastWiFiCheck < WIFI_CHECK_INTERVAL) {
-        return;
-    }
-    lastWiFiCheck = millis();
-    
+    unsigned long currentMillis = millis();
     bool isConnected = WiFi.isConnected();
     
-    // If we were connected and now we're not, show error
-    if (wasConnected && !isConnected) {
-        debugln("WiFi disconnected!");
-        
-        showNoConnectionScreen(
-            "WiFi Connection Lost!\n"
-            "Please restart WiFi Setup"
-        );
+    // If connected and we were reconnecting, reset the retry counter
+    if (isConnected) {
+        if (isReconnecting) {
+            Serial.println("✓ WiFi reconnected successfully!");
+            isReconnecting = false;
+            waitingForConnection = false;
+            reconnectAttempts = 0;
+        }
+        wasConnected = true;
+        return;
     }
     
-    wasConnected = isConnected;
+    // WiFi is disconnected - handle reconnection logic
+    if (!isConnected && wasConnected) {
+        // First time detecting disconnection
+        if (!isReconnecting) {
+            Serial.println("⚠ WiFi disconnected! Starting reconnection attempts...");
+            isReconnecting = true;
+            reconnectAttempts = 0;
+            waitUntilTime = 0;  // Start immediately
+            waitingForConnection = false;
+        }
+        
+        // If we're waiting for a connection to establish
+        if (waitingForConnection) {
+            // Check if we've exceeded the connection timeout
+            if (currentMillis - reconnectStartTime >= WIFI_CONNECT_TIMEOUT) {
+                Serial.println("⏱ Connection timeout");
+                waitingForConnection = false;
+                
+                // Check if we've exhausted all retry attempts
+                if (reconnectAttempts >= MAX_RECONNECT_ATTEMPTS) {
+                    Serial.println("❌ All reconnection attempts failed!");
+                    Serial.println("Showing NoConnectionScreen...");
+                    
+                    isReconnecting = false;
+                    reconnectAttempts = 0;
+                    wasConnected = false;
+                    
+                    showNoConnectionScreen(
+                        "WiFi Connection Lost!\n"
+                        "Failed to reconnect\n"
+                        "after 5 attempts.\n"
+                        "Please restart WiFi"
+                    );
+                } else {
+                    // Schedule next attempt in 30 seconds
+                    waitUntilTime = currentMillis + WIFI_RECONNECT_DELAY;
+                    Serial.print("⏳ Next attempt in 30 seconds... (");
+                    Serial.print(MAX_RECONNECT_ATTEMPTS - reconnectAttempts);
+                    Serial.println(" attempts remaining)");
+                }
+            }
+            // Still waiting for connection, check periodically
+            else if (currentMillis - lastWiFiCheck >= WIFI_CHECK_INTERVAL) {
+                lastWiFiCheck = currentMillis;
+                // Connection check happens at top of function
+            }
+            return;
+        }
+        
+        // If it's time to attempt reconnection
+        if (currentMillis >= waitUntilTime) {
+            reconnectAttempts++;
+            
+            Serial.print("🔄 Reconnection attempt ");
+            Serial.print(reconnectAttempts);
+            Serial.print(" of ");
+            Serial.println(MAX_RECONNECT_ATTEMPTS);
+            
+            // Attempt to reconnect
+            WiFi.reconnect();
+            reconnectStartTime = currentMillis;
+            waitingForConnection = true;
+        }
+    }
+    
+    // Regular WiFi status check
+    if (currentMillis - lastWiFiCheck >= WIFI_CHECK_INTERVAL) {
+        lastWiFiCheck = currentMillis;
+    }
 }

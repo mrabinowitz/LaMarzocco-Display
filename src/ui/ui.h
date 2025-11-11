@@ -63,10 +63,12 @@ void ui_event_powerButton( lv_event_t * e);
 extern lv_obj_t *ui_powerButton;
 extern lv_obj_t *ui_steamButton;
 extern lv_obj_t *ui_timeLabel;
-extern lv_obj_t *ui_CoffeeArc;
+extern lv_obj_t *ui_Arc2;
+extern lv_obj_t *ui_Arc3;
 extern lv_obj_t *ui_CoffeeImage;
 extern lv_obj_t *ui_SteamImage;
-extern lv_obj_t *ui_SteamArc;
+extern lv_obj_t *ui_CoffeeLabel;
+extern lv_obj_t *ui_SteamLabel;
 // CUSTOM VARIABLES
 
 // EVENTS
