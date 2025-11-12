@@ -73,11 +73,12 @@ The pin configuration is automatically detected by the LilyGo AMOLED library:
   - Shows remaining time in seconds (when ≤ 60 seconds)
   - Shows "READY" when at temperature
   - Shows "OFF" when machine is off/standby
-- **Progress Arcs**: Visual countdown from 100% → 0% during warm-up
+- **Progress Arcs**: Visual progress indicator that fills from 0% → 100% during warm-up
 - **Smart Display Logic**:
   - Machine OFF/StandBy → "OFF", arc at 0%
   - Machine ON, no heating needed → "READY", arc at 100%
-  - Machine ON, heating up → Countdown timer with progress arc
+  - Machine ON, heating up → Countdown timer with progress arc filling up
+- **Timezone-aware**: Automatically converts GMT timestamps to local time
 
 ### 3. WiFi Management
 
@@ -106,6 +107,35 @@ The pin configuration is automatically detected by the LilyGo AMOLED library:
 - **Request Signing**: Y5.e signature algorithm
 - **Secure Storage**: NVS (Non-Volatile Storage) for credentials
 - **Installation Keys**: Unique device identification
+
+### 6. Memory & Performance Optimizations
+
+- **Heap Protection**: 
+  - Increased signature buffers (128 bytes) to prevent corruption
+  - Pre-allocated strings with `reserve()` to avoid fragmentation
+  - Memory monitoring before/after crypto operations
+- **Task Stack Management**: 
+  - LVGL task stack increased to 16KB for crypto operations
+  - Proper yield() calls after heavy cryptographic work
+- **Non-blocking Operations**: 
+  - WiFi reconnection with state machine (no blocking delays)
+  - Smooth UI updates with LVGL timers
+  - WebSocket handling in callback context with cached tokens
+- **Robust Error Handling**:
+  - UUID generation validation
+  - Signature generation error checking
+  - Heap corruption prevention with buffer clearing
+
+### 7. Recent Bug Fixes
+
+- ✅ Fixed arc display showing 0% when ready (now correctly shows 100%)
+- ✅ Fixed heap corruption in ECDSA signature generation
+- ✅ Fixed LoadProhibited crashes with proper memory allocation
+- ✅ Fixed `readyStartTime` interpretation (target time vs start time)
+- ✅ Fixed timezone conversion for accurate countdown timers
+- ✅ Fixed NVS key length limits (shortened to 15 chars)
+- ✅ Fixed WebSocket disconnection issues with proper SSL setup
+- ✅ Fixed JSON parsing with increased buffer sizes
 
 ---
 
@@ -342,7 +372,7 @@ Machine ON + readyStartTime = null
 Machine ON + readyStartTime = timestamp
     ↓
 ┌──────────┐
-│ HEATING  │ Label: "X min" or "X sec", Arc: 100% → 0%
+│ HEATING  │ Label: "X min" or "X sec", Arc: 0% → 100% (fills up)
 └────┬─────┘
      │
      ├─[remaining > 60s]──→ Update every 30 seconds
@@ -352,9 +382,9 @@ Machine ON + readyStartTime = timestamp
 
 **Calculation**:
 ```cpp
-elapsed_time = current_time - readyStartTime
-remaining_time = WARMUP_DURATION_SEC (300s) - elapsed_time
-arc_value = (remaining_time / 300) * 100
+remaining_seconds = (readyStartTime - current_time) / 1000  // Both in GMT milliseconds
+arc_value = 100 - ((remaining_seconds * 100) / WARMUP_DURATION_SEC)  // Inverted to fill up
+// Example: 300s remaining → 0%, 150s remaining → 50%, 0s remaining → 100%
 ```
 
 ### 4. WiFi Reconnection
@@ -544,6 +574,50 @@ const uint16_t WS_PORT = 443;
 ```
 
 **Note**: These should not be changed unless La Marzocco updates their API endpoints.
+
+### Memory & Performance Configuration
+
+**Task Stack Sizes** (`src/main.cpp`):
+```cpp
+// LVGL task stack (default: 16KB)
+xTaskCreatePinnedToCore(Task_LVGL, "Task_LVGL", 
+                        1024 * 16,  // 16KB stack for crypto operations
+                        NULL, 3, NULL, 0);
+```
+
+**Cryptographic Buffers** (`src/lamarzocco_auth.cpp`):
+```cpp
+// Signature buffer size (default: 128 bytes)
+uint8_t sig[128];  // ECDSA DER signature buffer
+
+// Hash buffer
+uint8_t hash[32];  // SHA256 hash (always 32 bytes)
+```
+
+**String Pre-allocation** (throughout codebase):
+```cpp
+String example;
+example.reserve(400);  // Pre-allocate to avoid fragmentation
+```
+
+**Platform Configuration** (`platformio.ini`):
+```ini
+-D CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC
+-D CONFIG_ESP32_WIFI_STATIC_RX_BUFFER_NUM=8
+-D CONFIG_ESP32_WIFI_DYNAMIC_RX_BUFFER_NUM=16
+```
+
+**To adjust memory settings**:
+- **Increase LVGL stack**: Change `1024 * 16` to higher value if experiencing crashes
+- **Reduce WiFi buffers**: Decrease `STATIC_RX_BUFFER_NUM` to free memory
+- **Signature buffer**: Do not decrease below 128 bytes (prevents heap corruption)
+
+**Memory Statistics**:
+- **RAM Usage**: ~15.9% (52KB / 327KB)
+- **Flash Usage**: ~24.6% (1.6MB / 6.5MB)
+- **LVGL Task Stack**: 16KB
+- **Signature Buffer**: 128 bytes
+- **Free Heap (typical)**: 180-190KB after initialization
 
 ### Debug Output
 
