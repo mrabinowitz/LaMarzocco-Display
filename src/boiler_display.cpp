@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <string.h>
 #include <sys/time.h>
+#include <time.h>
 
 // Debug output
 #define DEBUG_BOILER 1
@@ -97,8 +98,23 @@ void boiler_display_update(BoilerType type, const char* machine_status,
     boiler_debug(machine_status);
     boiler_debug(", Boiler: ");
     boiler_debug(boiler_status);
-    boiler_debug(", ReadyTime: ");
+    boiler_debug(", TargetReadyTime: ");
     boiler_debugln((long long)ready_start_time);
+    
+    // If we have a valid ready time, show when it will be ready in local timezone
+    // Note: ready_start_time is the timestamp when boiler WILL BE ready (target time)
+    if (ready_start_time > 0) {
+        time_t ready_time_sec = (time_t)(ready_start_time / 1000);  // Convert ms to seconds
+        struct tm timeinfo;
+        localtime_r(&ready_time_sec, &timeinfo);  // Convert to local timezone
+        
+        char time_str[32];
+        strftime(time_str, sizeof(time_str), "%H:%M:%S", &timeinfo);
+        boiler_debug("  ✓ Ready at: ");
+        boiler_debug(time_str);
+        boiler_debug(" local time");
+        boiler_debugln();
+    }
     
     // Check machine status first
     if (strcmp(machine_status, "Off") == 0 || strcmp(machine_status, "StandBy") == 0) {
@@ -178,11 +194,15 @@ void boiler_display_set_all_off(void) {
 }
 
 /**
- * Get current Unix timestamp in milliseconds
+ * Get current Unix timestamp in milliseconds (GMT/UTC)
+ * Note: This returns GMT time regardless of timezone configuration
+ * The timezone offset is only used for display purposes via getLocalTime()
  */
 int64_t boiler_display_get_current_time_ms(void) {
     struct timeval tv;
     gettimeofday(&tv, NULL);
+    // gettimeofday returns seconds since Unix epoch (1970-01-01 00:00:00 UTC)
+    // This is always in GMT/UTC, timezone doesn't affect this value
     return (int64_t)tv.tv_sec * 1000LL + (int64_t)tv.tv_usec / 1000LL;
 }
 
@@ -237,18 +257,33 @@ void boiler_display_timer_callback(lv_timer_t* timer) {
 
 /**
  * Calculate remaining seconds until boiler is ready
+ * Both ready_start_time and now_ms are GMT Unix timestamps in milliseconds
  * 
- * @param ready_start_time Ready start time in milliseconds (when heating started)
- * @param now_ms Current time in milliseconds
+ * IMPORTANT: ready_start_time is when the boiler WILL BE ready (not when it started heating)
+ * 
+ * @param ready_start_time Time when boiler will be ready in milliseconds GMT
+ * @param now_ms Current time in milliseconds GMT
  * @return Remaining seconds (0 or negative means ready)
  */
 static int calculate_remaining_seconds(int64_t ready_start_time, int64_t now_ms) {
-    // Calculate elapsed time since heating started
-    int64_t elapsed_ms = now_ms - ready_start_time;
-    int elapsed_sec = (int)(elapsed_ms / 1000);
+    // Both timestamps are in GMT, so direct comparison is valid
+    // Calculate remaining time until ready
+    int64_t remaining_ms = ready_start_time - now_ms;
+    int remaining_sec = (int)(remaining_ms / 1000);
     
-    // Calculate remaining time
-    int remaining_sec = WARMUP_DURATION_SEC - elapsed_sec;
+    // Calculate for display
+    int remaining_min = remaining_sec / 60;
+    int remaining_sec_part = remaining_sec % 60;
+    
+    #if DEBUG_BOILER
+    if (remaining_sec > 0) {
+        boiler_debug("  [Time calc: Remaining ");
+        boiler_debug(remaining_min);
+        boiler_debug(" min ");
+        boiler_debug(remaining_sec_part);
+        boiler_debugln(" sec]");
+    }
+    #endif
     
     return remaining_sec;
 }
@@ -269,9 +304,12 @@ static void update_arc_and_label(BoilerInfo* boiler, int remaining_seconds) {
     
     boiler->last_remaining_sec = remaining_seconds;
     
-    // Calculate arc value (100% at start, 0% at end)
-    // Arc represents time remaining, so it decreases as time passes
-    int arc_value = (remaining_seconds * 100) / WARMUP_DURATION_SEC;
+    // Calculate arc value (0% at start, 100% when ready)
+    // Arc represents progress towards ready state, so it increases as time passes
+    // Note: We use WARMUP_DURATION_SEC (300s) as the assumed max duration
+    // The arc will be accurate if actual warmup is ~5 minutes
+    // INVERTED: 100 - (remaining * 100 / max) so it fills up as it heats
+    int arc_value = 100 - ((remaining_seconds * 100) / WARMUP_DURATION_SEC);
     if (arc_value < 0) arc_value = 0;
     if (arc_value > 100) arc_value = 100;
     

@@ -220,11 +220,26 @@ void LaMarzoccoWebSocket::_handle_websocket_event(WStype_t type, uint8_t* payloa
                     
                     if (command == "CONNECTED") {
                         debugln("*** ✓✓✓ STOMP CONNECTED - Server accepted! ✓✓✓ ***");
-                        // Subscribe to dashboard immediately - match Python format exactly
+                        
+                        // Generate subscription ID (pre-allocate to avoid fragmentation)
                         _subscription_id = LaMarzoccoAuth::generate_uuid();
-                        String subscribe_headers = "destination:/ws/sn/" + _serial_number + "/dashboard\n";
+                        if (_subscription_id.length() == 0) {
+                            debugln("ERROR: Failed to generate subscription ID!");
+                            _ws.disconnect();
+                            break;
+                        }
+                        
+                        // Subscribe to dashboard immediately - match Python format exactly
+                        // Build headers carefully to minimize memory allocations
+                        String subscribe_headers;
+                        subscribe_headers.reserve(256);  // Pre-allocate
+                        subscribe_headers = "destination:/ws/sn/";
+                        subscribe_headers += _serial_number;
+                        subscribe_headers += "/dashboard\n";
                         subscribe_headers += "ack:auto\n";
-                        subscribe_headers += "id:" + _subscription_id + "\n";
+                        subscribe_headers += "id:";
+                        subscribe_headers += _subscription_id;
+                        subscribe_headers += "\n";
                         subscribe_headers += "content-length:0\n";  // No space after colon
                         
                         String subscribe_msg = _encode_stomp_message("SUBSCRIBE", subscribe_headers);
@@ -366,7 +381,16 @@ bool LaMarzoccoWebSocket::connect(const String& serial_number) {
     }
     
     String installation_id, timestamp, nonce, signature;
+    debugln("🔐 Generating request signature (heavy crypto work)...");
     LaMarzoccoAuth::generate_extra_request_headers(key, installation_id, timestamp, nonce, signature);
+    
+    if (signature.length() == 0) {
+        debugln("ERROR: Failed to generate signature!");
+        return false;
+    }
+    
+    debugln("✓ Signature generated successfully");
+    yield();  // Give system time to recover after heavy crypto
     
     debugln("📋 WEBSOCKET CONNECTION HEADERS:");
     debugln("  X-App-Installation-Id: " + installation_id);
@@ -378,39 +402,40 @@ bool LaMarzoccoWebSocket::connect(const String& serial_number) {
     // CRITICAL: Installation key headers MUST be sent in HTTP WebSocket upgrade request
     // WebSocketsClient library adds NEW_LINE after extraHeaders, so don't add trailing \r\n
     // Format: "Header1: Value1\r\nHeader2: Value2" (no trailing \r\n on last header)
-    String extraHeaders = "X-App-Installation-Id: " + installation_id + "\r\n";
-    extraHeaders += "X-Timestamp: " + timestamp + "\r\n";
-    extraHeaders += "X-Nonce: " + nonce + "\r\n";
-    extraHeaders += "X-Request-Signature: " + signature;  // No \r\n on last header
+    // Build headers carefully with reserve to avoid fragmentation
+    String extraHeaders;
+    extraHeaders.reserve(400);  // Pre-allocate to avoid fragmentation
+    extraHeaders = "X-App-Installation-Id: ";
+    extraHeaders += installation_id;
+    extraHeaders += "\r\nX-Timestamp: ";
+    extraHeaders += timestamp;
+    extraHeaders += "\r\nX-Nonce: ";
+    extraHeaders += nonce;
+    extraHeaders += "\r\nX-Request-Signature: ";
+    extraHeaders += signature;  // No \r\n on last header
     
     debug("Setting extra headers for HTTP upgrade (length=");
     debug(extraHeaders.length());
-    debugln("):");
-    // Print headers in a readable format
-    debugln("X-App-Installation-Id: " + installation_id);
-    debugln("X-Timestamp: " + timestamp);
-    debugln("X-Nonce: " + nonce);
-    debugln("X-Request-Signature: " + signature);
+    debugln(")");
     
     // Set extra headers BEFORE calling beginSSL
     // This is critical - without these headers, server will reject connection
     _ws.setExtraHeaders(extraHeaders.c_str());
-    debugln("Extra headers configured (setExtraHeaders called)");
+    debugln("✓ Extra headers configured");
     
     // Connect to websocket (beginSSL handles SSL automatically)
-    debugln("🚀 Starting WebSocket connection with detailed logging...");
-    debug("📡 WebSocket URL: wss://");
+    debugln("🚀 Starting WebSocket connection...");
+    debug("📡 URL: wss://");
     debug(WS_BASE_URL);
     debugln("/ws/connect");
-    debugln("📍 Destination: /ws/sn/" + _serial_number + "/dashboard");
-    debugln("");
     
     // Make sure we're not already trying to connect
     _ws.disconnect();
-    // Small delay to ensure disconnect completes, but do it via loop
-    // Actually, just call beginSSL - it will handle reconnection
+    delay(100);  // Small delay to ensure disconnect completes
     
+    debugln("Calling beginSSL()...");
     _ws.beginSSL(WS_BASE_URL, 443, "/ws/connect");
+    debugln("✓ beginSSL() returned");
     
     debugln("⏳ WebSocket connection initiated, waiting for handshake...");
     debugln("💡 You should see messages when power state changes!");

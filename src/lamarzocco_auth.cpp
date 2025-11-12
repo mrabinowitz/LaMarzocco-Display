@@ -124,7 +124,11 @@ String LaMarzoccoAuth::generate_uuid() {
     uuid_bytes[6] = (uuid_bytes[6] & 0x0F) | 0x40;  // Version 4
     uuid_bytes[8] = (uuid_bytes[8] & 0x3F) | 0x80;  // Variant 10
     
-    String uuid = "";
+    // Pre-allocate string to avoid memory fragmentation
+    // UUID format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx (36 chars)
+    String uuid;
+    uuid.reserve(37);  // 36 chars + null terminator
+    
     char hex_chars[] = "0123456789abcdef";
     
     for (int i = 0; i < 16; i++) {
@@ -202,8 +206,21 @@ String LaMarzoccoAuth::generate_request_proof(const String& base_string, const u
 }
 
 void LaMarzoccoAuth::generate_extra_request_headers(const InstallationKey& key, String& installation_id, String& timestamp, String& nonce, String& signature) {
+    // Check available heap before doing heavy operations
+    debug("Free heap before header gen: ");
+    debugln(ESP.getFreeHeap());
+    debug("Minimum free heap: ");
+    debugln(ESP.getMinFreeHeap());
+    
     installation_id = key.installation_id;
     nonce = generate_uuid();
+    
+    if (nonce.length() == 0) {
+        debugln("ERROR: Failed to generate nonce UUID!");
+        signature = "";
+        return;
+    }
+    
     // Timestamp in milliseconds
     timestamp = String((unsigned long)millis());
     
@@ -217,6 +234,11 @@ void LaMarzoccoAuth::generate_extra_request_headers(const InstallationKey& key, 
     proof_input += timestamp;
     
     String proof = generate_request_proof(proof_input, key.secret);
+    if (proof.length() == 0) {
+        debugln("ERROR: Failed to generate request proof!");
+        signature = "";
+        return;
+    }
     
     String signature_data;
     signature_data.reserve(300);  // Pre-allocate
@@ -237,7 +259,9 @@ void LaMarzoccoAuth::generate_extra_request_headers(const InstallationKey& key, 
     }
     
     // ECDSA signature buffer - DER format can be up to 72 bytes for SECP256R1
-    uint8_t sig[80];  // Increased buffer size
+    // Using larger buffer and clearing it to prevent corruption
+    uint8_t sig[128];  // Extra large buffer for safety
+    memset(sig, 0, sizeof(sig));
     size_t sig_len = sizeof(sig);
     
     mbedtls_ecdsa_context* ecdsa = mbedtls_pk_ec(pk);
@@ -248,11 +272,16 @@ void LaMarzoccoAuth::generate_extra_request_headers(const InstallationKey& key, 
         return;
     }
     
+    // Hash the signature data first (before signing)
+    uint8_t hash[32];
+    memset(hash, 0, sizeof(hash));
+    
     mbedtls_md_context_t md_ctx;
     mbedtls_md_init(&md_ctx);
     const mbedtls_md_info_t* md_info = mbedtls_md_info_from_type(MBEDTLS_MD_SHA256);
     if (!md_info) {
         debugln("Failed to get MD info");
+        mbedtls_md_free(&md_ctx);
         mbedtls_pk_free(&pk);
         signature = "";
         return;
@@ -267,12 +296,12 @@ void LaMarzoccoAuth::generate_extra_request_headers(const InstallationKey& key, 
         return;
     }
     
-    uint8_t hash[32];
     mbedtls_md_starts(&md_ctx);
     mbedtls_md_update(&md_ctx, (const unsigned char*)signature_data.c_str(), signature_data.length());
     mbedtls_md_finish(&md_ctx, hash);
     mbedtls_md_free(&md_ctx);
     
+    // Sign the hash
     ret = mbedtls_ecdsa_write_signature(ecdsa, MBEDTLS_MD_SHA256,
                                          hash, 32,
                                          sig, &sig_len, NULL, NULL);
@@ -280,12 +309,22 @@ void LaMarzoccoAuth::generate_extra_request_headers(const InstallationKey& key, 
     mbedtls_pk_free(&pk);
     
     if (ret == 0 && sig_len > 0 && sig_len <= sizeof(sig)) {
+        debug("✓ Signature generated, length: ");
+        debugln(sig_len);
         signature = base64_encode(sig, sig_len);
+        debug("✓ Signature base64 length: ");
+        debugln(signature.length());
     } else {
-        debug("ECDSA signing failed, ret=");
-        debugln(ret);
+        debug("✗ ECDSA signing failed, ret=");
+        debug(ret);
+        debug(", sig_len=");
+        debugln(sig_len);
         signature = "";
     }
+    
+    // Check heap after crypto operations
+    debug("Free heap after header gen: ");
+    debugln(ESP.getFreeHeap());
 }
 
 bool LaMarzoccoAuth::generate_installation_key(const String& installation_id, InstallationKey& key) {

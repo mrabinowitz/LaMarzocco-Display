@@ -84,7 +84,7 @@ void setup()
 
   xTaskCreatePinnedToCore(Task_LVGL,
                           "Task_LVGL",
-                          1024 * 10,
+                          1024 * 16,  // Increased for crypto operations
                           NULL,
                           3,
                           NULL,

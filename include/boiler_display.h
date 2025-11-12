@@ -41,17 +41,30 @@ typedef struct {
 void boiler_display_init(void);
 
 /**
- * Update a specific boiler's status based on machine state and ready start time
+ * Update a specific boiler's status based on machine state and ready time
  * 
  * Behavior:
  * - If machine is OFF/StandBy: Display "OFF", arc at 0%
  * - If machine is ON and ready_start_time is 0/null: Display "READY", arc at 100% (already ready)
  * - If machine is ON and ready_start_time is valid: Display countdown timer, arc shows progress
  * 
+ * Time Handling:
+ * - ready_start_time is when the boiler WILL BE READY (not when it started heating)
+ * - It is a GMT/UTC Unix timestamp in milliseconds from the API
+ * - Remaining time = ready_start_time - current_time
+ * - Internal calculations use GMT for accuracy (timezone-independent)
+ * - Debug output shows local time conversions for verification
+ * - Display shows remaining time which is timezone-independent
+ * 
+ * Arc Calculation:
+ * - Arc assumes WARMUP_DURATION_SEC (300s/5min) as typical warmup time
+ * - Arc value = (remaining_seconds / 300) * 100%
+ * - Arc is most accurate when actual warmup is close to 5 minutes
+ * 
  * @param type Boiler type (BOILER_COFFEE or BOILER_STEAM)
  * @param machine_status Machine status string ("Off", "StandBy", "PoweredOn", etc.)
  * @param boiler_status Boiler status string ("Off", "StandBy", "HeatingUp", "Ready", etc.)
- * @param ready_start_time Ready start time in milliseconds (GMT Unix timestamp), 0 if not available/null
+ * @param ready_start_time Time when boiler will be ready in ms (GMT Unix timestamp), 0 if not available/null
  */
 void boiler_display_update(BoilerType type, const char* machine_status, 
                            const char* boiler_status, int64_t ready_start_time);

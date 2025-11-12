@@ -46,7 +46,9 @@ int getBatteryLevel(void)
     // Convert to voltage (assuming 3.3V reference and potential voltage divider)
     // For many ESP32 boards with battery, there's a 2:1 divider
     float voltage = (rawValue / 4095.0) * 3.3 * 2.0;
-    
+
+    Serial.print("Battery voltage: ");
+    Serial.println(voltage);
     // Map voltage to battery level (0-3)
     // 3.0V = empty (0), 3.5V = low (1), 3.8V = medium (2), 4.0V+ = full (3)
     if (voltage >= 4.0) return 3;      // Full - battery3
