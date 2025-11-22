@@ -17,6 +17,15 @@ public:
     // Toggle power
     bool toggle_power();
     
+    // Set steam boiler on/off
+    bool set_steam(bool enabled);
+    
+    // Get current steam boiler state
+    bool get_steam_state() const { return _steam_state; }
+    
+    // Toggle steam boiler
+    bool toggle_steam();
+    
     // Connect websocket and start listening
     bool connect_websocket();
     
@@ -33,6 +42,7 @@ private:
     LaMarzoccoClient& _client;
     LaMarzoccoWebSocket& _websocket;
     bool _power_state;
+    bool _steam_state;
     
     // WebSocket message handler
     static void _websocket_message_handler(const String& message);

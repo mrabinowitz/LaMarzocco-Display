@@ -73,11 +73,11 @@ The pin configuration is automatically detected by the LilyGo AMOLED library:
   - Shows remaining time in seconds (when ≤ 60 seconds)
   - Shows "READY" when at temperature
   - Shows "OFF" when machine is off/standby
-- **Progress Arcs**: Visual progress indicator that fills from 0% → 100% during warm-up
+- **Progress Arcs**: Visual countdown indicator that empties from 100% → 0% as time runs out, then fills to 100% when ready
 - **Smart Display Logic**:
   - Machine OFF/StandBy → "OFF", arc at 0%
   - Machine ON, no heating needed → "READY", arc at 100%
-  - Machine ON, heating up → Countdown timer with progress arc filling up
+  - Machine ON, heating up → Countdown timer with arc emptying as time runs out
 - **Timezone-aware**: Automatically converts GMT timestamps to local time
 
 ### 3. WiFi Management
@@ -128,7 +128,8 @@ The pin configuration is automatically detected by the LilyGo AMOLED library:
 
 ### 7. Recent Bug Fixes
 
-- ✅ Fixed arc display showing 0% when ready (now correctly shows 100%)
+- ✅ Fixed arc behavior to show countdown correctly (empties 100% → 0%, then fills to 100% when ready)
+- ✅ Fixed temperature display to show "°C" instead of just "°"
 - ✅ Fixed heap corruption in ECDSA signature generation
 - ✅ Fixed LoadProhibited crashes with proper memory allocation
 - ✅ Fixed `readyStartTime` interpretation (target time vs start time)
@@ -372,7 +373,7 @@ Machine ON + readyStartTime = null
 Machine ON + readyStartTime = timestamp
     ↓
 ┌──────────┐
-│ HEATING  │ Label: "X min" or "X sec", Arc: 0% → 100% (fills up)
+│ HEATING  │ Label: "X min" or "X sec", Arc: 100% → 0% (empties)
 └────┬─────┘
      │
      ├─[remaining > 60s]──→ Update every 30 seconds
@@ -383,8 +384,8 @@ Machine ON + readyStartTime = timestamp
 **Calculation**:
 ```cpp
 remaining_seconds = (readyStartTime - current_time) / 1000  // Both in GMT milliseconds
-arc_value = 100 - ((remaining_seconds * 100) / WARMUP_DURATION_SEC)  // Inverted to fill up
-// Example: 300s remaining → 0%, 150s remaining → 50%, 0s remaining → 100%
+arc_value = (remaining_seconds * 100) / WARMUP_DURATION_SEC  // Decreases as time passes
+// Example: 300s remaining → 100%, 150s remaining → 50%, 0s remaining → 0%
 ```
 
 ### 4. WiFi Reconnection

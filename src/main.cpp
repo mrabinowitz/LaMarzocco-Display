@@ -12,6 +12,7 @@
 #include "lamarzocco_machine.h"
 #include "lamarzocco_auth.h"
 #include "boiler_display.h"
+#include "water_alarm.h"
 
 Preferences preferences;
 LaMarzoccoClient* g_client = nullptr;
@@ -250,7 +251,12 @@ void Task_LVGL(void *pvParameters)
   ui_init();
   
   // Initialize boiler display system after UI is ready
+  boiler_display_set_mutex((void*)gui_mutex);  // Set mutex for thread-safe LVGL access
   boiler_display_init();
+  
+  // Initialize water alarm display system
+  water_alarm_set_mutex((void*)gui_mutex);
+  water_alarm_init();
   
   // Main LVGL loop
   while (1)

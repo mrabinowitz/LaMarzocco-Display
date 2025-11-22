@@ -105,8 +105,8 @@ ui_CoffeeImage = lv_img_create(ui_mainScreen);
 lv_img_set_src(ui_CoffeeImage, &ui_img_coffee_png);
 lv_obj_set_width( ui_CoffeeImage, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_CoffeeImage, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_CoffeeImage, -163 );
-lv_obj_set_y( ui_CoffeeImage, 71 );
+lv_obj_set_x( ui_CoffeeImage, -162 );
+lv_obj_set_y( ui_CoffeeImage, 59 );
 lv_obj_set_align( ui_CoffeeImage, LV_ALIGN_CENTER );
 lv_obj_add_flag( ui_CoffeeImage, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
 lv_obj_clear_flag( ui_CoffeeImage, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
@@ -116,7 +116,7 @@ lv_img_set_src(ui_SteamImage, &ui_img_wind_png);
 lv_obj_set_width( ui_SteamImage, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_SteamImage, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_x( ui_SteamImage, 35 );
-lv_obj_set_y( ui_SteamImage, 69 );
+lv_obj_set_y( ui_SteamImage, 56 );
 lv_obj_set_align( ui_SteamImage, LV_ALIGN_CENTER );
 lv_obj_add_flag( ui_SteamImage, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
 lv_obj_clear_flag( ui_SteamImage, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
@@ -139,6 +139,25 @@ lv_obj_set_align( ui_SteamLabel, LV_ALIGN_CENTER );
 lv_label_set_text(ui_SteamLabel,"OFF");
 lv_obj_set_style_text_font(ui_SteamLabel, &lv_font_montserrat_26, LV_PART_MAIN| LV_STATE_DEFAULT);
 
+ui_CoffeeTempLabel = lv_label_create(ui_mainScreen);
+lv_obj_set_width( ui_CoffeeTempLabel, 42);
+lv_obj_set_height( ui_CoffeeTempLabel, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_x( ui_CoffeeTempLabel, -159 );
+lv_obj_set_y( ui_CoffeeTempLabel, 88 );
+lv_obj_set_align( ui_CoffeeTempLabel, LV_ALIGN_CENTER );
+lv_label_set_text(ui_CoffeeTempLabel,"");
+lv_obj_set_style_text_align(ui_CoffeeTempLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN| LV_STATE_DEFAULT);
+
+ui_BoilerTempLabel = lv_label_create(ui_mainScreen);
+lv_obj_set_width( ui_BoilerTempLabel, lv_pct(7));
+lv_obj_set_height( ui_BoilerTempLabel, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_x( ui_BoilerTempLabel, 34 );
+lv_obj_set_y( ui_BoilerTempLabel, 83 );
+lv_obj_set_align( ui_BoilerTempLabel, LV_ALIGN_CENTER );
+lv_label_set_text(ui_BoilerTempLabel,"");
+lv_obj_set_style_text_align(ui_BoilerTempLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN| LV_STATE_DEFAULT);
+
 lv_obj_add_event_cb(ui_powerButton, ui_event_powerButton, LV_EVENT_ALL, NULL);
+lv_obj_add_event_cb(ui_steamButton, ui_event_steamButton, LV_EVENT_ALL, NULL);
 
 }

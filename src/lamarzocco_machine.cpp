@@ -1,12 +1,13 @@
 #include "lamarzocco_machine.h"
 #include "config.h"
 #include "boiler_display.h"
+#include "water_alarm.h"
 #include <ArduinoJson.h>
 
 LaMarzoccoMachine* LaMarzoccoMachine::_instance = nullptr;
 
 LaMarzoccoMachine::LaMarzoccoMachine(LaMarzoccoClient& client, LaMarzoccoWebSocket& websocket)
-    : _client(client), _websocket(websocket), _power_state(false) {
+    : _client(client), _websocket(websocket), _power_state(false), _steam_state(false) {
     _instance = this;
     _websocket.set_message_callback(_websocket_message_handler);
 }
@@ -42,8 +43,11 @@ void LaMarzoccoMachine::_websocket_message_handler(const String& message) {
         const char* machine_mode = nullptr;
         const char* coffee_boiler_status = nullptr;
         int64_t coffee_ready_time = 0;
+        float coffee_target_temp = 0.0;
         const char* steam_boiler_status = nullptr;
         int64_t steam_ready_time = 0;
+        const char* steam_target_level = nullptr;
+        bool no_water_alarm = false;
         
         // Parse widgets array to extract boiler and machine status
         if (doc.containsKey("widgets")) {
@@ -84,10 +88,15 @@ void LaMarzoccoMachine::_websocket_message_handler(const String& message) {
                     if (output.containsKey("readyStartTime") && !output["readyStartTime"].isNull()) {
                         coffee_ready_time = output["readyStartTime"].as<long long>();
                     }
+                    if (output.containsKey("targetTemperature")) {
+                        coffee_target_temp = output["targetTemperature"].as<float>();
+                    }
                     
                     Serial.print("  Status: ");
                     Serial.print(coffee_boiler_status ? coffee_boiler_status : "null");
-                    Serial.print(", ReadyStartTime: ");
+                    Serial.print(", TargetTemp: ");
+                    Serial.print(coffee_target_temp);
+                    Serial.print("°C, ReadyStartTime: ");
                     Serial.println((long long)coffee_ready_time);
                 }
                 // Extract steam boiler status and ready time
@@ -99,37 +108,98 @@ void LaMarzoccoMachine::_websocket_message_handler(const String& message) {
                     if (output.containsKey("readyStartTime") && !output["readyStartTime"].isNull()) {
                         steam_ready_time = output["readyStartTime"].as<long long>();
                     }
+                    if (output.containsKey("targetLevel")) {
+                        steam_target_level = output["targetLevel"];
+                    }
+                    
+                    // Update internal steam state based on status
+                    if (steam_boiler_status) {
+                        if (strcmp(steam_boiler_status, "Off") != 0 && strcmp(steam_boiler_status, "StandBy") != 0) {
+                            _instance->_steam_state = true;
+                        } else {
+                            _instance->_steam_state = false;
+                        }
+                    }
                     
                     Serial.print("  Status: ");
                     Serial.print(steam_boiler_status ? steam_boiler_status : "null");
+                    Serial.print(", TargetLevel: ");
+                    Serial.print(steam_target_level ? steam_target_level : "null");
                     Serial.print(", ReadyStartTime: ");
                     Serial.println((long long)steam_ready_time);
+                }
+                // Check for NoWater alarm
+                else if (strcmp(code, "CMNoWater") == 0) {
+                    Serial.println("💧 Found CMNoWater widget");
+                    JsonObject output = widget["output"].as<JsonObject>();
+                    
+                    if (output.containsKey("allarm")) {
+                        no_water_alarm = output["allarm"].as<bool>();
+                        Serial.print("  NoWater alarm: ");
+                        Serial.println(no_water_alarm ? "TRUE ⚠️" : "false");
+                    }
                 }
             }
         }
         
+        // Check if any boiler reports NoWater status
+        if (coffee_boiler_status && strcmp(coffee_boiler_status, "NoWater") == 0) {
+            Serial.println("⚠️  Coffee boiler reports NoWater!");
+            no_water_alarm = true;
+        }
+        if (steam_boiler_status && strcmp(steam_boiler_status, "NoWater") == 0) {
+            Serial.println("⚠️  Steam boiler reports NoWater!");
+            no_water_alarm = true;
+        }
+        
+        // Update water alarm state
+        water_alarm_set(no_water_alarm);
+        
         // Update boiler displays if we have machine status
+        // Boiler displays (labels) continue to update even during water alarm
+        // Only the arcs are hidden by water_alarm system
         if (machine_status) {
             Serial.println("\n🔄 Updating boiler displays...");
+            
+            // Format temperature and level strings
+            char coffee_temp_str[16] = "";
+            char steam_level_str[16] = "";
+            
+            if (coffee_target_temp > 0) {
+                snprintf(coffee_temp_str, sizeof(coffee_temp_str), "%.0f°C", coffee_target_temp);
+            }
+            
+            if (steam_target_level) {
+                // Convert "Level2" to "L2", "Level1" to "L1", etc.
+                if (strncmp(steam_target_level, "Level", 5) == 0) {
+                    snprintf(steam_level_str, sizeof(steam_level_str), "L%s", steam_target_level + 5);
+                } else {
+                    strncpy(steam_level_str, steam_target_level, sizeof(steam_level_str) - 1);
+                }
+            }
             
             // If machine is OFF or StandBy, use that for both boilers
             if (strcmp(machine_status, "Off") == 0 || strcmp(machine_status, "StandBy") == 0) {
                 boiler_display_update(BOILER_COFFEE, machine_status, 
                                      coffee_boiler_status ? coffee_boiler_status : "Off", 
-                                     coffee_ready_time);
+                                     coffee_ready_time,
+                                     coffee_temp_str[0] ? coffee_temp_str : nullptr);
                 boiler_display_update(BOILER_STEAM, machine_status, 
                                      steam_boiler_status ? steam_boiler_status : "Off", 
-                                     steam_ready_time);
+                                     steam_ready_time,
+                                     steam_level_str[0] ? steam_level_str : nullptr);
             } else {
                 // Machine is ON, update each boiler independently
                 if (coffee_boiler_status) {
                     boiler_display_update(BOILER_COFFEE, machine_status, 
-                                         coffee_boiler_status, coffee_ready_time);
+                                         coffee_boiler_status, coffee_ready_time,
+                                         coffee_temp_str[0] ? coffee_temp_str : nullptr);
                 }
                 
                 if (steam_boiler_status) {
                     boiler_display_update(BOILER_STEAM, machine_status, 
-                                         steam_boiler_status, steam_ready_time);
+                                         steam_boiler_status, steam_ready_time,
+                                         steam_level_str[0] ? steam_level_str : nullptr);
                 }
             }
         } else {
@@ -186,6 +256,45 @@ bool LaMarzoccoMachine::set_power(bool enabled) {
 
 bool LaMarzoccoMachine::toggle_power() {
     return set_power(!_power_state);
+}
+
+bool LaMarzoccoMachine::set_steam(bool enabled) {
+    String serial = _client.get_serial_number();
+    if (serial.length() == 0) {
+        debugln("Serial number not set");
+        return false;
+    }
+    
+    JsonDocument request;
+    request["boilerIndex"] = 1;  // Steam boiler index
+    request["enabled"] = enabled;
+    
+    JsonDocument response;
+    bool success = _client.api_call("POST", 
+                                     "/things/" + serial + "/command/CoffeeMachineSettingSteamBoilerEnabled",
+                                     &request, &response);
+    
+    if (success) {
+        _steam_state = enabled;
+        debug("Steam boiler set to: ");
+        debugln(enabled ? "ON" : "OFF");
+    } else {
+        debugln("Failed to set steam boiler");
+    }
+    
+    return success;
+}
+
+bool LaMarzoccoMachine::toggle_steam() {
+    Serial.println("===========================================");
+    Serial.println("STEAM BUTTON PRESSED - Toggling Steam Boiler");
+    Serial.print("Current steam state: ");
+    Serial.println(_steam_state ? "ON" : "OFF");
+    Serial.print("Target steam state: ");
+    Serial.println(_steam_state ? "OFF" : "ON");
+    Serial.println("===========================================");
+    
+    return set_steam(!_steam_state);
 }
 
 bool LaMarzoccoMachine::connect_websocket() {

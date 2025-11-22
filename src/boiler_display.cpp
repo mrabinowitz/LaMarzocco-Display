@@ -4,6 +4,8 @@
 #include <string.h>
 #include <sys/time.h>
 #include <time.h>
+#include <freertos/FreeRTOS.h>
+#include <freertos/semphr.h>
 
 // Debug output
 #define DEBUG_BOILER 1
@@ -20,6 +22,7 @@ static BoilerInfo g_boilers[2];
 static lv_timer_t* g_update_timer = NULL;
 static bool g_initialized = false;
 static bool g_timer_paused = true;  // Track timer pause state manually
+static SemaphoreHandle_t g_gui_mutex = NULL;  // Mutex for thread-safe LVGL access
 
 // Forward declarations for helper functions
 static void update_arc_and_label(BoilerInfo* boiler, int remaining_seconds);
@@ -29,6 +32,18 @@ static void set_boiler_heating(BoilerInfo* boiler, int64_t ready_start_time);
 static void set_boiler_ready(BoilerInfo* boiler);
 static void restart_update_timer(void);
 static const char* boiler_type_name(BoilerType type);
+
+// Helper macro for mutex protection
+#define TAKE_MUTEX() if (g_gui_mutex && xSemaphoreTake(g_gui_mutex, pdMS_TO_TICKS(100)) == pdTRUE)
+#define GIVE_MUTEX() if (g_gui_mutex) xSemaphoreGive(g_gui_mutex)
+
+/**
+ * Set the GUI mutex for thread-safe LVGL access
+ */
+void boiler_display_set_mutex(void* mutex) {
+    g_gui_mutex = (SemaphoreHandle_t)mutex;
+    boiler_debugln("[Boiler] Mutex set for thread-safe operation");
+}
 
 /**
  * Initialize the boiler display system
@@ -79,10 +94,29 @@ void boiler_display_init(void) {
  * - Machine ON + readyStartTime is valid → Display countdown, arc shows progress
  */
 void boiler_display_update(BoilerType type, const char* machine_status, 
-                           const char* boiler_status, int64_t ready_start_time) {
+                           const char* boiler_status, int64_t ready_start_time,
+                           const char* target_value) {
     if (!g_initialized) {
         boiler_debugln("[Boiler] ERROR: Not initialized!");
         return;
+    }
+    
+    // Update temperature/level label (with mutex protection)
+    if (target_value != NULL && strlen(target_value) > 0) {
+        TAKE_MUTEX() {
+            if (type == BOILER_COFFEE) {
+                // Coffee boiler: display temperature (e.g., "94°C")
+                lv_label_set_text(ui_CoffeeTempLabel, target_value);
+                boiler_debug("[Boiler] Coffee target temp: ");
+                boiler_debugln(target_value);
+            } else if (type == BOILER_STEAM) {
+                // Steam boiler: display level (e.g., "L2" for Level2)
+                lv_label_set_text(ui_BoilerTempLabel, target_value);
+                boiler_debug("[Boiler] Steam target level: ");
+                boiler_debugln(target_value);
+            }
+            GIVE_MUTEX();
+        }
     }
     
     if (type >= 2) {
@@ -129,7 +163,20 @@ void boiler_display_update(BoilerType type, const char* machine_status,
         return;
     }
     
-    // Machine is ON (PoweredOn, BrewingMode, etc.)
+    // Check if boiler itself is OFF or StandBy (e.g., steam boiler disabled while machine is on)
+    if (strcmp(boiler_status, "Off") == 0 || strcmp(boiler_status, "StandBy") == 0) {
+        // Boiler is disabled - set to OFF
+        if (boiler->state != BOILER_STATE_OFF) {
+            boiler_debug("[Boiler] ");
+            boiler_debug(boiler_type_name(type));
+            boiler_debugln(" -> OFF (boiler disabled)");
+            set_boiler_off(boiler);
+            restart_update_timer();  // Recalculate timer period
+        }
+        return;
+    }
+    
+    // Machine is ON (PoweredOn, BrewingMode, etc.) and boiler is enabled
     if (ready_start_time <= 0) {
         // No valid ready start time - machine is ON but boiler is already READY (not heating)
         if (boiler->state != BOILER_STATE_READY) {
@@ -304,17 +351,13 @@ static void update_arc_and_label(BoilerInfo* boiler, int remaining_seconds) {
     
     boiler->last_remaining_sec = remaining_seconds;
     
-    // Calculate arc value (0% at start, 100% when ready)
-    // Arc represents progress towards ready state, so it increases as time passes
+    // Calculate arc value (100% at start, 0% at end)
+    // Arc represents time REMAINING, so it decreases as time passes
     // Note: We use WARMUP_DURATION_SEC (300s) as the assumed max duration
     // The arc will be accurate if actual warmup is ~5 minutes
-    // INVERTED: 100 - (remaining * 100 / max) so it fills up as it heats
-    int arc_value = 100 - ((remaining_seconds * 100) / WARMUP_DURATION_SEC);
+    int arc_value = (remaining_seconds * 100) / WARMUP_DURATION_SEC;
     if (arc_value < 0) arc_value = 0;
     if (arc_value > 100) arc_value = 100;
-    
-    // Update arc with animation for smooth transition
-    lv_arc_set_value(boiler->arc, arc_value);
     
     // Update label text
     char label_text[16];
@@ -330,7 +373,12 @@ static void update_arc_and_label(BoilerInfo* boiler, int remaining_seconds) {
         snprintf(label_text, sizeof(label_text), "READY");
     }
     
-    lv_label_set_text(boiler->label, label_text);
+    // Update arc and label with mutex protection
+    TAKE_MUTEX() {
+        lv_arc_set_value(boiler->arc, arc_value);
+        lv_label_set_text(boiler->label, label_text);
+        GIVE_MUTEX();
+    }
     
     boiler_debug("[Boiler] ");
     boiler_debug(boiler_type_name(boiler->type));
@@ -351,11 +399,12 @@ static void set_boiler_off(BoilerInfo* boiler) {
     boiler->ready_start_time = 0;
     boiler->last_remaining_sec = -1;
     
-    // Set arc to 0%
-    lv_arc_set_value(boiler->arc, 0);
-    
-    // Set label to "OFF"
-    lv_label_set_text(boiler->label, "OFF");
+    // Set arc to 0% and label to "OFF" with mutex protection
+    TAKE_MUTEX() {
+        lv_arc_set_value(boiler->arc, 0);
+        lv_label_set_text(boiler->label, "OFF");
+        GIVE_MUTEX();
+    }
 }
 
 /**
@@ -390,11 +439,12 @@ static void set_boiler_ready(BoilerInfo* boiler) {
     boiler->state = BOILER_STATE_READY;
     boiler->last_remaining_sec = 0;
     
-    // Set arc to 100% (full circle when ready)
-    lv_arc_set_value(boiler->arc, 100);
-    
-    // Set label to "READY"
-    lv_label_set_text(boiler->label, "READY");
+    // Set arc to 100% and label to "READY" with mutex protection
+    TAKE_MUTEX() {
+        lv_arc_set_value(boiler->arc, 100);
+        lv_label_set_text(boiler->label, "READY");
+        GIVE_MUTEX();
+    }
 }
 
 /**

@@ -4,10 +4,15 @@
 #include <ui/ui.h>
 #include "WiFi.h"
 #include "config.h"
+#include <freertos/FreeRTOS.h>
+#include <freertos/semphr.h>
 
 unsigned long timeUpdate = 0;
 unsigned long statusUpdate = 0;
 bool statusImagesInitialized = false;
+
+// External mutex from main.cpp
+extern SemaphoreHandle_t gui_mutex;
 
 
 bool updateDateTime(void)
@@ -28,7 +33,11 @@ bool updateDateTime(void)
              timeinfo.tm_hour,
              timeinfo.tm_min);
 
-    lv_label_set_text(ui_timeLabel, timeStr);
+    // Update label with mutex protection
+    if (gui_mutex && xSemaphoreTake(gui_mutex, pdMS_TO_TICKS(100)) == pdTRUE) {
+        lv_label_set_text(ui_timeLabel, timeStr);
+        xSemaphoreGive(gui_mutex);
+    }
 
     timeUpdate = millis();
     return true;
@@ -90,25 +99,28 @@ void updateBatteryImages(void)
         default: batteryImg = &ui_img_battery0_png; break;
     }
     
-    // Update all battery images on all screens
-    // NoConnectionScreen - BatImage
-    if (ui_BatImage) {
-        lv_img_set_src(ui_BatImage, batteryImg);
-        lv_obj_clear_flag(ui_BatImage, LV_OBJ_FLAG_HIDDEN);
+    // Update all battery images on all screens with mutex protection
+    if (gui_mutex && xSemaphoreTake(gui_mutex, pdMS_TO_TICKS(100)) == pdTRUE) {
+        // NoConnectionScreen - BatImage
+        if (ui_BatImage) {
+            lv_img_set_src(ui_BatImage, batteryImg);
+            lv_obj_clear_flag(ui_BatImage, LV_OBJ_FLAG_HIDDEN);
+        }
+        
+        // setupWifiScreen - BatImage1
+        if (ui_BatImage1) {
+            lv_img_set_src(ui_BatImage1, batteryImg);
+            lv_obj_clear_flag(ui_BatImage1, LV_OBJ_FLAG_HIDDEN);
+        }
+        
+        // mainScreen - BatImage2
+        if (ui_BatImage2) {
+            lv_img_set_src(ui_BatImage2, batteryImg);
+            lv_obj_clear_flag(ui_BatImage2, LV_OBJ_FLAG_HIDDEN);
+        }
+        
+        xSemaphoreGive(gui_mutex);
     }
-    
-    // setupWifiScreen - BatImage1
-    if (ui_BatImage1) {
-        lv_img_set_src(ui_BatImage1, batteryImg);
-        lv_obj_clear_flag(ui_BatImage1, LV_OBJ_FLAG_HIDDEN);
-    }
-    
-    // mainScreen - BatImage2
-    if (ui_BatImage2) {
-        lv_img_set_src(ui_BatImage2, batteryImg);
-        lv_obj_clear_flag(ui_BatImage2, LV_OBJ_FLAG_HIDDEN);
-    }
-    
 }
 
 void updateWiFiImages(void)
@@ -124,25 +136,28 @@ void updateWiFiImages(void)
         default: wifiImg = &ui_img_wifi0_png; break;
     }
     
-    // Update WiFi images on all screens
-    // NoConnectionScreen - NoWifiImage
-    if (ui_NoWifiImage) {
-        lv_img_set_src(ui_NoWifiImage, wifiImg);
-        lv_obj_clear_flag(ui_NoWifiImage, LV_OBJ_FLAG_HIDDEN);
+    // Update WiFi images on all screens with mutex protection
+    if (gui_mutex && xSemaphoreTake(gui_mutex, pdMS_TO_TICKS(100)) == pdTRUE) {
+        // NoConnectionScreen - NoWifiImage
+        if (ui_NoWifiImage) {
+            lv_img_set_src(ui_NoWifiImage, wifiImg);
+            lv_obj_clear_flag(ui_NoWifiImage, LV_OBJ_FLAG_HIDDEN);
+        }
+        
+        // setupWifiScreen - NoWifiImage1
+        if (ui_NoWifiImage1) {
+            lv_img_set_src(ui_NoWifiImage1, wifiImg);
+            lv_obj_clear_flag(ui_NoWifiImage1, LV_OBJ_FLAG_HIDDEN);
+        }
+        
+        // mainScreen - WifiImage
+        if (ui_WifiImage) {
+            lv_img_set_src(ui_WifiImage, wifiImg);
+            lv_obj_clear_flag(ui_WifiImage, LV_OBJ_FLAG_HIDDEN);
+        }
+        
+        xSemaphoreGive(gui_mutex);
     }
-    
-    // setupWifiScreen - NoWifiImage1
-    if (ui_NoWifiImage1) {
-        lv_img_set_src(ui_NoWifiImage1, wifiImg);
-        lv_obj_clear_flag(ui_NoWifiImage1, LV_OBJ_FLAG_HIDDEN);
-    }
-    
-    // mainScreen - WifiImage
-    if (ui_WifiImage) {
-        lv_img_set_src(ui_WifiImage, wifiImg);
-        lv_obj_clear_flag(ui_WifiImage, LV_OBJ_FLAG_HIDDEN);
-    }
-    
 }
 
 // Combined function to update both battery and WiFi images
@@ -165,16 +180,21 @@ void updateStatusImages(void)
 // Usage example: showNoConnectionScreen("WiFi Disconnected!\nPlease reconnect");
 void showNoConnectionScreen(const char* errorMessage)
 {
-    // Check if we're already on NoConnectionScreen to avoid recursive screen loading
-    if (lv_scr_act() != ui_NoConnectionScreen)
-    {
-        debugln("Redirecting to NoConnectionScreen");
-        lv_disp_load_scr(ui_NoConnectionScreen);
-    }
-    
-    // Update the error label with custom message
-    if (ui_ErrorLabel) {
-        lv_label_set_text(ui_ErrorLabel, errorMessage);
+    // LVGL calls with mutex protection
+    if (gui_mutex && xSemaphoreTake(gui_mutex, pdMS_TO_TICKS(100)) == pdTRUE) {
+        // Check if we're already on NoConnectionScreen to avoid recursive screen loading
+        if (lv_scr_act() != ui_NoConnectionScreen)
+        {
+            debugln("Redirecting to NoConnectionScreen");
+            lv_disp_load_scr(ui_NoConnectionScreen);
+        }
+        
+        // Update the error label with custom message
+        if (ui_ErrorLabel) {
+            lv_label_set_text(ui_ErrorLabel, errorMessage);
+        }
+        
+        xSemaphoreGive(gui_mutex);
     }
 }
 

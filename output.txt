@@ -1,0 +1,452 @@
+tartTime":1761071774016,"status":"Off"}}],"uuid":"eb74f068-2024-4126-982c-21c04c10991e","commands":[]}
+11:44:13:476 -> Decoding message, length: 2252
+11:44:13:479 -> Header end position: 201
+11:44:13:481 -> Command: MESSAGE
+11:44:13:481 -> Body starts at position: 203
+11:44:13:484 -> Null terminator at position: 2251
+11:44:13:487 -> Body extracted, length: 2048
+11:44:13:490 -> ✓ Decoded STOMP - command: MESSAGE
+11:44:13:495 -> Headers: destination:/ws/sn/MR028317/dashboard
+11:44:13:498 -> content-type:application/json
+11:44:13:501 -> subscription:d968cc75-0708-4513-9ea3-f15682e267b5
+11:44:13:507 -> message-id:073f23f7-6448-ecb5-2e04-93766a89df95-3233799
+11:44:13:509 -> content-length:2048
+11:44:13:512 -> Body: {"connected":true,"removedWidgets":[{"code":"CMMachineGroupStatus","index":1},{"code":"CMMachineModuleStatus","index":1},{"code":"CMSteamBoilerTemperature","index":1},{"code":"CMGroupDoses","index":1},{"code":"CMPreInfusionEnable","index":1},{"code":"CMPreInfusion","index":1},{"code":"CMBrewByWeightDoses","index":1},{"code":"CMCupWarmer","index":1},{"code":"CMHotWaterDose","index":1},{"code":"CMAutoFlush","index":1},{"code":"CMRinseFlush","index":1},{"code":"CMSteamFlush","index":1},{"code":"CMNoWater","index":1},{"code":"GMachineStatus","index":1},{"code":"GDoses","index":1},{"code":"GSingleDoseMode","index":1},{"code":"GBaristaLight","index":1},{"code":"GHopperOpened","index":1},{"code":"GSpeed","index":1},{"code":"GMirrorDoses","index":1},{"code":"GMoreDose","index":1},{"code":"GGrindWith","index":1},{"code":"CMModuleAndTapsTemperature","index":1}],"connectionDate":1762827148223,"widgets":[{"code":"CMMachineStatus","index":1,"output":{"status":"Brewing","availableModes":["BrewingMode","StandBy"],"mode":"BrewingMode","nextStatus":{"status":"StandBy","startTime":1762928922738},"brewingStartTime":1762927151195,"lastCoffee":null,"lastFlush":null}},{"code":"CMCoffeeBoiler","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":false,"targetTemperature":94.00,"targetTemperatureMin":80,"targetTemperatureMax":100,"targetTemperatureStep":0.1,"readyStartTime":null}},{"code":"CMSteamBoilerLevel","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":true,"targetLevel":"Level2","targetLevelSupported":true,"readyStartTime":null}},{"code":"CMPreBrewing","index":1,"output":{"availableModes":["PreBrewing","Disabled"],"mode":"PreBrewing","times":{"PreBrewing":[{"doseIndex":"ByGroup","seconds":{"Out":3.00,"In":2.00},"secondsMin":{"Out":1,"In":1},"secondsMax":{"Out":9,"In":9},"secondsStep":{"Out":0.1,"In":0.1}}]},"doseIndexSupported":false}},{"code":"CMBackFlush","index":1,"output":{"lastCleaningStartTime":1761071774016,"status":"Off"}}],"uuid":"eb74f068-2024-4126-982c-21c04c10991e","commands":[]}
+11:44:13:690 -> ✓✓✓ Received MESSAGE frame from server ✓✓✓
+11:44:13:695 -> Message body length: 2048
+11:44:13:698 -> Calling message callback...
+11:44:13:701 -> 
+11:44:13:701 -> ========== WEBSOCKET MESSAGE RECEIVED ==========
+11:44:13:704 -> Message length: 2048 bytes
+11:44:13:710 -> ✓ JSON parsed successfully
+11:44:13:710 -> Widgets count: 5
+11:44:13:712 -> ✓ Found CMMachineStatus widget
+11:44:13:715 -> 📊 Machine status: Brewing (mode: BrewingMode)
+11:44:13:721 -> ☕ Found CMCoffeeBoiler widget
+11:44:13:723 ->   Status: Ready, TargetTemp: 94.00°C, ReadyStartTime: 0
+11:44:13:726 -> ���️  Found CMSteamBoilerLevel widget
+11:44:13:732 ->   Status: Ready, TargetLevel: Level2, ReadyStartTime: 0
+11:44:13:737 -> 
+11:44:13:737 -> 🔄 Updating boiler displays...
+11:44:13:740 -> [Boiler] Coffee target temp: 94°C
+11:44:13:743 -> [Boiler] Update Coffee - Machine: Brewing, Boiler: Ready, TargetReadyTime: 0
+11:44:13:748 -> [Boiler] Steam target level: L2
+11:44:13:751 -> [Boiler] Update Steam - Machine: Brewing, Boiler: Ready, TargetReadyTime: 0
+11:44:13:759 -> ===============================================
+11:44:13:762 -> 
+11:44:13:762 -> Callback completed.
+11:44:21:633 -> Battery voltage: 4.09
+11:44:38:267 -> *** WebSocket TEXT message received (2382 bytes) ***
+11:44:38:269 -> Raw message:
+11:44:38:272 -> MESSAGE
+11:44:38:272 -> destination:/ws/sn/MR028317/dashboard
+11:44:38:275 -> content-type:application/json
+11:44:38:278 -> subscription:d968cc75-0708-4513-9ea3-f15682e267b5
+11:44:38:283 -> message-id:073f23f7-6448-ecb5-2e04-93766a89df95-3233897
+11:44:38:286 -> content-length:2178
+11:44:38:289 -> 
+11:44:38:289 -> {"connected":true,"removedWidgets":[{"code":"CMMachineGroupStatus","index":1},{"code":"CMMachineModuleStatus","index":1},{"code":"CMSteamBoilerTemperature","index":1},{"code":"CMGroupDoses","index":1},{"code":"CMPreInfusionEnable","index":1},{"code":"CMPreInfusion","index":1},{"code":"CMBrewByWeightDoses","index":1},{"code":"CMCupWarmer","index":1},{"code":"CMHotWaterDose","index":1},{"code":"CMAutoFlush","index":1},{"code":"CMRinseFlush","index":1},{"code":"CMSteamFlush","index":1},{"code":"CMNoWater","index":1},{"code":"GMachineStatus","index":1},{"code":"GDoses","index":1},{"code":"GSingleDoseMode","index":1},{"code":"GBaristaLight","index":1},{"code":"GHopperOpened","index":1},{"code":"GSpeed","index":1},{"code":"GMirrorDoses","index":1},{"code":"GMoreDose","index":1},{"code":"GGrindWith","index":1},{"code":"CMModuleAndTapsTemperature","index":1}],"connectionDate":1762827148223,"widgets":[{"code":"CMMachineStatus","index":1,"output":{"status":"PoweredOn","availableModes":["BrewingMode","StandBy"],"mode":"BrewingMode","nextStatus":{"status":"StandBy","startTime":1762928922738},"brewingStartTime":null,"lastCoffee":{"time":1762927176702,"extractionSeconds":25.612,"doseMode":"Continuous","doseIndex":"Continuous","doseValue":null,"doseValueNumerator":null},"lastFlush":null}},{"code":"CMCoffeeBoiler","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":false,"targetTemperature":94.00,"targetTemperatureMin":80,"targetTemperatureMax":100,"targetTemperatureStep":0.1,"readyStartTime":null}},{"code":"CMSteamBoilerLevel","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":true,"targetLevel":"Level2","targetLevelSupported":true,"readyStartTime":null}},{"code":"CMPreBrewing","index":1,"output":{"availableModes":["PreBrewing","Disabled"],"mode":"PreBrewing","times":{"PreBrewing":[{"doseIndex":"ByGroup","seconds":{"Out":3.00,"In":2.00},"secondsMin":{"Out":1,"In":1},"secondsMax":{"Out":9,"In":9},"secondsStep":{"Out":0.1,"In":0.1}}]},"doseIndexSupported":false}},{"code":"CMBackFlush","index":1,"output":{"lastCleaningStartTime":1761071774016,"status":"Off"}}],"uuid":"3cf64c5c-0628-47a4-a16a-4429e21fbddc","commands":[]}
+11:44:38:478 -> Decoding message, length: 2382
+11:44:38:480 -> Header end position: 201
+11:44:38:484 -> Command: MESSAGE
+11:44:38:486 -> Body starts at position: 203
+11:44:38:486 -> Null terminator at position: 2381
+11:44:38:492 -> Body extracted, length: 2178
+11:44:38:492 -> ��� Decoded STOMP - command: MESSAGE
+11:44:38:497 -> Headers: destination:/ws/sn/MR028317/dashboard
+11:44:38:500 -> content-type:application/json
+11:44:38:503 -> subscription:d968cc75-0708-4513-9ea3-f15682e267b5
+11:44:38:508 -> message-id:073f23f7-6448-ecb5-2e04-93766a89df95-3233897
+11:44:38:511 -> content-length:2178
+11:44:38:516 -> Body: {"connected":true,"removedWidgets":[{"code":"CMMachineGroupStatus","index":1},{"code":"CMMachineModuleStatus","index":1},{"code":"CMSteamBoilerTemperature","index":1},{"code":"CMGroupDoses","index":1},{"code":"CMPreInfusionEnable","index":1},{"code":"CMPreInfusion","index":1},{"code":"CMBrewByWeightDoses","index":1},{"code":"CMCupWarmer","index":1},{"code":"CMHotWaterDose","index":1},{"code":"CMAutoFlush","index":1},{"code":"CMRinseFlush","index":1},{"code":"CMSteamFlush","index":1},{"code":"CMNoWater","index":1},{"code":"GMachineStatus","index":1},{"code":"GDoses","index":1},{"code":"GSingleDoseMode","index":1},{"code":"GBaristaLight","index":1},{"code":"GHopperOpened","index":1},{"code":"GSpeed","index":1},{"code":"GMirrorDoses","index":1},{"code":"GMoreDose","index":1},{"code":"GGrindWith","index":1},{"code":"CMModuleAndTapsTemperature","index":1}],"connectionDate":1762827148223,"widgets":[{"code":"CMMachineStatus","index":1,"output":{"status":"PoweredOn","availableModes":["BrewingMode","StandBy"],"mode":"BrewingMode","nextStatus":{"status":"StandBy","startTime":1762928922738},"brewingStartTime":null,"lastCoffee":{"time":1762927176702,"extractionSeconds":25.612,"doseMode":"Continuous","doseIndex":"Continuous","doseValue":null,"doseValueNumerator":null},"lastFlush":null}},{"code":"CMCoffeeBoiler","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":false,"targetTemperature":94.00,"targetTemperatureMin":80,"targetTemperatureMax":100,"targetTemperatureStep":0.1,"readyStartTime":null}},{"code":"CMSteamBoilerLevel","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":true,"targetLevel":"Level2","targetLevelSupported":true,"readyStartTime":null}},{"code":"CMPreBrewing","index":1,"output":{"availableModes":["PreBrewing","Disabled"],"mode":"PreBrewing","times":{"PreBrewing":[{"doseIndex":"ByGroup","seconds":{"Out":3.00,"In":2.00},"secondsMin":{"Out":1,"In":1},"secondsMax":{"Out":9,"In":9},"secondsStep":{"Out":0.1,"In":0.1}}]},"doseIndexSupported":false}},{"code":"CMBackFlush","index":1,"output":{"lastCleaningStartTime":1761071774016,"status":"Off"}}],"uuid":"3cf64c5c-0628-47a4-a16a-4429e21fbddc","commands":[]}
+11:44:38:703 -> ✓��✓ Received MESSAGE frame from server ✓✓✓
+11:44:38:708 -> Message body length: 2178
+11:44:38:711 -> Calling message callback...
+11:44:38:714 -> 
+11:44:38:714 -> ========== WEBSOCKET MESSAGE RECEIVED ==========
+11:44:38:716 -> Message length: 2178 bytes
+11:44:38:719 -> ✓ JSON parsed successfully
+11:44:38:722 -> Widgets count: 5
+11:44:38:725 -> ✓ Found CMMachineStatus widget
+11:44:38:727 -> 📊 Machine status: PoweredOn (mode: BrewingMode)
+11:44:38:733 -> ☕ Found CMCoffeeBoiler widget
+11:44:38:736 ->   Status: Ready, TargetTemp: 94.00°C, ReadyStartTime: 0
+11:44:38:739 -> ♨��  Found CMSteamBoilerLevel widget
+11:44:38:744 ->   Status: Ready, TargetLevel: Level2, ReadyStartTime: 0
+11:44:38:747 -> 
+11:44:38:747 -> ��� Updating boiler displays...
+11:44:38:752 -> [Boiler] Coffee target temp: 94��C
+11:44:38:756 -> [Boiler] Update Coffee - Machine: PoweredOn, Boiler: Ready, TargetReadyTime: 0
+11:44:38:761 -> [Boiler] Steam target level: L2
+11:44:38:764 -> [Boiler] Update Steam - Machine: PoweredOn, Boiler: Ready, TargetReadyTime: 0
+11:44:38:772 -> ===============================================
+11:44:38:775 -> 
+11:44:38:775 -> Callback completed.
+11:44:42:845 -> [STATUS] WebSocket is connected and running
+11:44:46:289 -> *** WebSocket TEXT message received (2395 bytes) ***
+11:44:46:291 -> Raw message:
+11:44:46:294 -> MESSAGE
+11:44:46:294 -> destination:/ws/sn/MR028317/dashboard
+11:44:46:297 -> content-type:application/json
+11:44:46:300 -> subscription:d968cc75-0708-4513-9ea3-f15682e267b5
+11:44:46:305 -> message-id:073f23f7-6448-ecb5-2e04-93766a89df95-3233929
+11:44:46:308 -> content-length:2191
+11:44:46:311 -> 
+11:44:46:311 -> {"connected":true,"removedWidgets":[{"code":"CMMachineGroupStatus","index":1},{"code":"CMMachineModuleStatus","index":1},{"code":"CMSteamBoilerTemperature","index":1},{"code":"CMGroupDoses","index":1},{"code":"CMPreInfusionEnable","index":1},{"code":"CMPreInfusion","index":1},{"code":"CMBrewByWeightDoses","index":1},{"code":"CMCupWarmer","index":1},{"code":"CMHotWaterDose","index":1},{"code":"CMAutoFlush","index":1},{"code":"CMRinseFlush","index":1},{"code":"CMSteamFlush","index":1},{"code":"CMNoWater","index":1},{"code":"GMachineStatus","index":1},{"code":"GDoses","index":1},{"code":"GSingleDoseMode","index":1},{"code":"GBaristaLight","index":1},{"code":"GHopperOpened","index":1},{"code":"GSpeed","index":1},{"code":"GMirrorDoses","index":1},{"code":"GMoreDose","index":1},{"code":"GGrindWith","index":1},{"code":"CMModuleAndTapsTemperature","index":1}],"connectionDate":1762827148223,"widgets":[{"code":"CMMachineStatus","index":1,"output":{"status":"PoweredOn","availableModes":["BrewingMode","StandBy"],"mode":"BrewingMode","nextStatus":{"status":"StandBy","startTime":1762928922738},"brewingStartTime":null,"lastCoffee":{"time":1762927176703,"extractionSeconds":25.612,"doseMode":"Continuous","doseIndex":"Continuous","doseValue":null,"doseValueNumerator":null},"lastFlush":null}},{"code":"CMCoffeeBoiler","index":1,"output":{"status":"HeatingUp","enabled":true,"enabledSupported":false,"targetTemperature":94.00,"targetTemperatureMin":80,"targetTemperatureMax":100,"targetTemperatureStep":0.1,"readyStartTime":1762927194949}},{"code":"CMSteamBoilerLevel","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":true,"targetLevel":"Level2","targetLevelSupported":true,"readyStartTime":null}},{"code":"CMPreBrewing","index":1,"output":{"availableModes":["PreBrewing","Disabled"],"mode":"PreBrewing","times":{"PreBrewing":[{"doseIndex":"ByGroup","seconds":{"Out":3.00,"In":2.00},"secondsMin":{"Out":1,"In":1},"secondsMax":{"Out":9,"In":9},"secondsStep":{"Out":0.1,"In":0.1}}]},"doseIndexSupported":false}},{"code":"CMBackFlush","index":1,"output":{"lastCleaningStartTime":1761071774016,"status":"Off"}}],"uuid":"c49a5830-c87e-4475-8bf9-1c886ec0a72b","commands":[]}
+11:44:46:502 -> Decoding message, length: 2395
+11:44:46:505 -> Header end position: 201
+11:44:46:505 -> Command: MESSAGE
+11:44:46:508 -> Body starts at position: 203
+11:44:46:511 -> Null terminator at position: 2394
+11:44:46:513 -> Body extracted, length: 2191
+11:44:46:516 -> ✓ Decoded STOMP - command: MESSAGE
+11:44:46:519 -> Headers: destination:/ws/sn/MR028317/dashboard
+11:44:46:524 -> content-type:application/json
+11:44:46:524 -> subscription:d968cc75-0708-4513-9ea3-f15682e267b5
+11:44:46:530 -> message-id:073f23f7-6448-ecb5-2e04-93766a89df95-3233929
+11:44:46:535 -> content-length:2191
+11:44:46:535 -> Body: {"connected":true,"removedWidgets":[{"code":"CMMachineGroupStatus","index":1},{"code":"CMMachineModuleStatus","index":1},{"code":"CMSteamBoilerTemperature","index":1},{"code":"CMGroupDoses","index":1},{"code":"CMPreInfusionEnable","index":1},{"code":"CMPreInfusion","index":1},{"code":"CMBrewByWeightDoses","index":1},{"code":"CMCupWarmer","index":1},{"code":"CMHotWaterDose","index":1},{"code":"CMAutoFlush","index":1},{"code":"CMRinseFlush","index":1},{"code":"CMSteamFlush","index":1},{"code":"CMNoWater","index":1},{"code":"GMachineStatus","index":1},{"code":"GDoses","index":1},{"code":"GSingleDoseMode","index":1},{"code":"GBaristaLight","index":1},{"code":"GHopperOpened","index":1},{"code":"GSpeed","index":1},{"code":"GMirrorDoses","index":1},{"code":"GMoreDose","index":1},{"code":"GGrindWith","index":1},{"code":"CMModuleAndTapsTemperature","index":1}],"connectionDate":1762827148223,"widgets":[{"code":"CMMachineStatus","index":1,"output":{"status":"PoweredOn","availableModes":["BrewingMode","StandBy"],"mode":"BrewingMode","nextStatus":{"status":"StandBy","startTime":1762928922738},"brewingStartTime":null,"lastCoffee":{"time":1762927176703,"extractionSeconds":25.612,"doseMode":"Continuous","doseIndex":"Continuous","doseValue":null,"doseValueNumerator":null},"lastFlush":null}},{"code":"CMCoffeeBoiler","index":1,"output":{"status":"HeatingUp","enabled":true,"enabledSupported":false,"targetTemperature":94.00,"targetTemperatureMin":80,"targetTemperatureMax":100,"targetTemperatureStep":0.1,"readyStartTime":1762927194949}},{"code":"CMSteamBoilerLevel","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":true,"targetLevel":"Level2","targetLevelSupported":true,"readyStartTime":null}},{"code":"CMPreBrewing","index":1,"output":{"availableModes":["PreBrewing","Disabled"],"mode":"PreBrewing","times":{"PreBrewing":[{"doseIndex":"ByGroup","seconds":{"Out":3.00,"In":2.00},"secondsMin":{"Out":1,"In":1},"secondsMax":{"Out":9,"In":9},"secondsStep":{"Out":0.1,"In":0.1}}]},"doseIndexSupported":false}},{"code":"CMBackFlush","index":1,"output":{"lastClea
+
+
+11:44:38:478 -> Decoding message, length: 2382
+11:44:38:480 -> Header end position: 201
+11:44:38:484 -> Command: MESSAGE
+11:44:38:486 -> Body starts at position: 203
+11:44:38:486 -> Null terminator at position: 2381
+11:44:38:492 -> Body extracted, length: 2178
+11:44:38:492 -> ��� Decoded STOMP - command: MESSAGE
+11:44:38:497 -> Headers: destination:/ws/sn/MR028317/dashboard
+11:44:38:500 -> content-type:application/json
+11:44:38:503 -> subscription:d968cc75-0708-4513-9ea3-f15682e267b5
+11:44:38:508 -> message-id:073f23f7-6448-ecb5-2e04-93766a89df95-3233897
+11:44:38:511 -> content-length:2178
+11:44:38:516 -> Body: {"connected":true,"removedWidgets":[{"code":"CMMachineGroupStatus","index":1},{"code":"CMMachineModuleStatus","index":1},{"code":"CMSteamBoilerTemperature","index":1},{"code":"CMGroupDoses","index":1},{"code":"CMPreInfusionEnable","index":1},{"code":"CMPreInfusion","index":1},{"code":"CMBrewByWeightDoses","index":1},{"code":"CMCupWarmer","index":1},{"code":"CMHotWaterDose","index":1},{"code":"CMAutoFlush","index":1},{"code":"CMRinseFlush","index":1},{"code":"CMSteamFlush","index":1},{"code":"CMNoWater","index":1},{"code":"GMachineStatus","index":1},{"code":"GDoses","index":1},{"code":"GSingleDoseMode","index":1},{"code":"GBaristaLight","index":1},{"code":"GHopperOpened","index":1},{"code":"GSpeed","index":1},{"code":"GMirrorDoses","index":1},{"code":"GMoreDose","index":1},{"code":"GGrindWith","index":1},{"code":"CMModuleAndTapsTemperature","index":1}],"connectionDate":1762827148223,"widgets":[{"code":"CMMachineStatus","index":1,"output":{"status":"PoweredOn","availableModes":["BrewingMode","StandBy"],"mode":"BrewingMode","nextStatus":{"status":"StandBy","startTime":1762928922738},"brewingStartTime":null,"lastCoffee":{"time":1762927176702,"extractionSeconds":25.612,"doseMode":"Continuous","doseIndex":"Continuous","doseValue":null,"doseValueNumerator":null},"lastFlush":null}},{"code":"CMCoffeeBoiler","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":false,"targetTemperature":94.00,"targetTemperatureMin":80,"targetTemperatureMax":100,"targetTemperatureStep":0.1,"readyStartTime":null}},{"code":"CMSteamBoilerLevel","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":true,"targetLevel":"Level2","targetLevelSupported":true,"readyStartTime":null}},{"code":"CMPreBrewing","index":1,"output":{"availableModes":["PreBrewing","Disabled"],"mode":"PreBrewing","times":{"PreBrewing":[{"doseIndex":"ByGroup","seconds":{"Out":3.00,"In":2.00},"secondsMin":{"Out":1,"In":1},"secondsMax":{"Out":9,"In":9},"secondsStep":{"Out":0.1,"In":0.1}}]},"doseIndexSupported":false}},{"code":"CMBackFlush","index":1,"output":{"lastCleaningStartTime":1761071774016,"status":"Off"}}],"uuid":"3cf64c5c-0628-47a4-a16a-4429e21fbddc","commands":[]}
+11:44:38:703 -> ✓��✓ Received MESSAGE frame from server ✓✓✓
+11:44:38:708 -> Message body length: 2178
+11:44:38:711 -> Calling message callback...
+11:44:38:714 -> 
+11:44:38:714 -> ========== WEBSOCKET MESSAGE RECEIVED ==========
+11:44:38:716 -> Message length: 2178 bytes
+11:44:38:719 -> ✓ JSON parsed successfully
+11:44:38:722 -> Widgets count: 5
+11:44:38:725 -> ✓ Found CMMachineStatus widget
+11:44:38:727 -> 📊 Machine status: PoweredOn (mode: BrewingMode)
+11:44:38:733 -> ☕ Found CMCoffeeBoiler widget
+11:44:38:736 ->   Status: Ready, TargetTemp: 94.00°C, ReadyStartTime: 0
+11:44:38:739 -> ♨��  Found CMSteamBoilerLevel widget
+11:44:38:744 ->   Status: Ready, TargetLevel: Level2, ReadyStartTime: 0
+11:44:38:747 -> 
+11:44:38:747 -> ��� Updating boiler displays...
+11:44:38:752 -> [Boiler] Coffee target temp: 94��C
+11:44:38:756 -> [Boiler] Update Coffee - Machine: PoweredOn, Boiler: Ready, TargetReadyTime: 0
+11:44:38:761 -> [Boiler] Steam target level: L2
+11:44:38:764 -> [Boiler] Update Steam - Machine: PoweredOn, Boiler: Ready, TargetReadyTime: 0
+11:44:38:772 -> ===============================================
+11:44:38:775 -> 
+11:44:38:775 -> Callback completed.
+11:44:42:845 -> [STATUS] WebSocket is connected and running
+11:44:46:289 -> *** WebSocket TEXT message received (2395 bytes) ***
+11:44:46:291 -> Raw message:
+11:44:46:294 -> MESSAGE
+11:44:46:294 -> destination:/ws/sn/MR028317/dashboard
+11:44:46:297 -> content-type:application/json
+11:44:46:300 -> subscription:d968cc75-0708-4513-9ea3-f15682e267b5
+11:44:46:305 -> message-id:073f23f7-6448-ecb5-2e04-93766a89df95-3233929
+11:44:46:308 -> content-length:2191
+11:44:46:311 -> 
+11:44:46:311 -> {"connected":true,"removedWidgets":[{"code":"CMMachineGroupStatus","index":1},{"code":"CMMachineModuleStatus","index":1},{"code":"CMSteamBoilerTemperature","index":1},{"code":"CMGroupDoses","index":1},{"code":"CMPreInfusionEnable","index":1},{"code":"CMPreInfusion","index":1},{"code":"CMBrewByWeightDoses","index":1},{"code":"CMCupWarmer","index":1},{"code":"CMHotWaterDose","index":1},{"code":"CMAutoFlush","index":1},{"code":"CMRinseFlush","index":1},{"code":"CMSteamFlush","index":1},{"code":"CMNoWater","index":1},{"code":"GMachineStatus","index":1},{"code":"GDoses","index":1},{"code":"GSingleDoseMode","index":1},{"code":"GBaristaLight","index":1},{"code":"GHopperOpened","index":1},{"code":"GSpeed","index":1},{"code":"GMirrorDoses","index":1},{"code":"GMoreDose","index":1},{"code":"GGrindWith","index":1},{"code":"CMModuleAndTapsTemperature","index":1}],"connectionDate":1762827148223,"widgets":[{"code":"CMMachineStatus","index":1,"output":{"status":"PoweredOn","availableModes":["BrewingMode","StandBy"],"mode":"BrewingMode","nextStatus":{"status":"StandBy","startTime":1762928922738},"brewingStartTime":null,"lastCoffee":{"time":1762927176703,"extractionSeconds":25.612,"doseMode":"Continuous","doseIndex":"Continuous","doseValue":null,"doseValueNumerator":null},"lastFlush":null}},{"code":"CMCoffeeBoiler","index":1,"output":{"status":"HeatingUp","enabled":true,"enabledSupported":false,"targetTemperature":94.00,"targetTemperatureMin":80,"targetTemperatureMax":100,"targetTemperatureStep":0.1,"readyStartTime":1762927194949}},{"code":"CMSteamBoilerLevel","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":true,"targetLevel":"Level2","targetLevelSupported":true,"readyStartTime":null}},{"code":"CMPreBrewing","index":1,"output":{"availableModes":["PreBrewing","Disabled"],"mode":"PreBrewing","times":{"PreBrewing":[{"doseIndex":"ByGroup","seconds":{"Out":3.00,"In":2.00},"secondsMin":{"Out":1,"In":1},"secondsMax":{"Out":9,"In":9},"secondsStep":{"Out":0.1,"In":0.1}}]},"doseIndexSupported":false}},{"code":"CMBackFlush","index":1,"output":{"lastCleaningStartTime":1761071774016,"status":"Off"}}],"uuid":"c49a5830-c87e-4475-8bf9-1c886ec0a72b","commands":[]}
+11:44:46:502 -> Decoding message, length: 2395
+11:44:46:505 -> Header end position: 201
+11:44:46:505 -> Command: MESSAGE
+11:44:46:508 -> Body starts at position: 203
+11:44:46:511 -> Null terminator at position: 2394
+11:44:46:513 -> Body extracted, length: 2191
+11:44:46:516 -> ✓ Decoded STOMP - command: MESSAGE
+11:44:46:519 -> Headers: destination:/ws/sn/MR028317/dashboard
+11:44:46:524 -> content-type:application/json
+11:44:46:524 -> subscription:d968cc75-0708-4513-9ea3-f15682e267b5
+11:44:46:530 -> message-id:073f23f7-6448-ecb5-2e04-93766a89df95-3233929
+11:44:46:535 -> content-length:2191
+11:44:46:535 -> Body: {"connected":true,"removedWidgets":[{"code":"CMMachineGroupStatus","index":1},{"code":"CMMachineModuleStatus","index":1},{"code":"CMSteamBoilerTemperature","index":1},{"code":"CMGroupDoses","index":1},{"code":"CMPreInfusionEnable","index":1},{"code":"CMPreInfusion","index":1},{"code":"CMBrewByWeightDoses","index":1},{"code":"CMCupWarmer","index":1},{"code":"CMHotWaterDose","index":1},{"code":"CMAutoFlush","index":1},{"code":"CMRinseFlush","index":1},{"code":"CMSteamFlush","index":1},{"code":"CMNoWater","index":1},{"code":"GMachineStatus","index":1},{"code":"GDoses","index":1},{"code":"GSingleDoseMode","index":1},{"code":"GBaristaLight","index":1},{"code":"GHopperOpened","index":1},{"code":"GSpeed","index":1},{"code":"GMirrorDoses","index":1},{"code":"GMoreDose","index":1},{"code":"GGrindWith","index":1},{"code":"CMModuleAndTapsTemperature","index":1}],"connectionDate":1762827148223,"widgets":[{"code":"CMMachineStatus","index":1,"output":{"status":"PoweredOn","availableModes":["BrewingMode","StandBy"],"mode":"BrewingMode","nextStatus":{"status":"StandBy","startTime":1762928922738},"brewingStartTime":null,"lastCoffee":{"time":1762927176703,"extractionSeconds":25.612,"doseMode":"Continuous","doseIndex":"Continuous","doseValue":null,"doseValueNumerator":null},"lastFlush":null}},{"code":"CMCoffeeBoiler","index":1,"output":{"status":"HeatingUp","enabled":true,"enabledSupported":false,"targetTemperature":94.00,"targetTemperatureMin":80,"targetTemperatureMax":100,"targetTemperatureStep":0.1,"readyStartTime":1762927194949}},{"code":"CMSteamBoilerLevel","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":true,"targetLevel":"Level2","targetLevelSupported":true,"readyStartTime":null}},{"code":"CMPreBrewing","index":1,"output":{"availableModes":["PreBrewing","Disabled"],"mode":"PreBrewing","times":{"PreBrewing":[{"doseIndex":"ByGroup","seconds":{"Out":3.00,"In":2.00},"secondsMin":{"Out":1,"In":1},"secondsMax":{"Out":9,"In":9},"secondsStep":{"Out":0.1,"In":0.1}}]},"doseIndexSupported":false}},{"code":"CMBackFlush","index":1,"output":{"lastCleaningStartTime":1761071774016,"status":"Off"}}],"uuid":"c49a5830-c87e-4475-8bf9-1c886ec0a72b","commands":[]}
+11:44:46:727 -> ✓✓✓ Received MESSAGE frame from server ✓✓✓
+11:44:46:733 -> Message body length: 2191
+11:44:46:735 -> Calling message callback...
+11:44:46:739 -> 
+11:44:46:739 -> ========== WEBSOCKET MESSAGE RECEIVED ==========
+11:44:46:741 -> Message length: 2191 bytes
+11:44:46:744 -> ✓ JSON parsed successfully
+11:44:46:746 -> Widgets count: 5
+11:44:46:749 -> ✓ Found CMMachineStatus widget
+11:44:46:752 -> 📊 Machine status: PoweredOn (mode: BrewingMode)
+11:44:46:755 -> ☕ Found CMCoffeeBoiler widget
+11:44:46:758 ->   Status: HeatingUp, TargetTemp: 94.00°C, ReadyStartTime: 1762927194949
+11:44:46:766 -> ♨️  Found CMSteamBoilerLevel widget
+11:44:46:769 ->   Status: Ready, TargetLevel: Level2, ReadyStartTime: 0
+11:44:46:774 -> 
+11:44:46:774 -> 🔄 Updating boiler displays...
+11:44:46:777 -> [Boiler] Coffee target temp: 94°C
+11:44:46:780 -> [Boiler] Update Coffee - Machine: PoweredOn, Boiler: HeatingUp, TargetReadyTime: 1762927194949
+11:44:46:788 ->   ✓ Ready at: 11:44:54 local time
+11:44:46:791 ->   [Time calc: Remaining 0 min 8 sec]
+11:44:46:794 -> [Boiler] Coffee remaining: 8 sec
+11:44:46:796 -> [Boiler] Coffee -> HEATING
+11:44:46:799 ->   [Time calc: Remaining 0 min 8 sec]
+11:44:46:802 -> [Boiler] Coffee display: 8 sec (arc: 2%)
+11:44:46:808 -> [Boiler] Timer resumed
+11:44:46:808 ->   [Time calc: Remaining 0 min 8 sec]
+11:44:46:813 -> [Boiler] Timer set to 1 second (fast updates)
+11:44:46:816 -> [Boiler] Steam target level: [Boiler] Timer callback - updating all boilers
+11:44:46:824 -> L2
+11:44:46:824 -> [Boiler] Update Steam - Machine: PoweredOn, Boiler: Ready, TargetReadyTime:   [Time calc: Remaining 0
+11:44:46:833 -> 0 min 8 sec]
+11:44:46:833 -> ===============================================
+11:44:46:838 -> 
+11:44:46:838 ->   [Time calc: Remaining 0 min 8 sec]
+11:44:46:841 -> [Boiler] Timer set to 1 second (fast updates)
+11:44:46:846 -> Callback completed.
+11:44:47:808 -> [Boiler] Timer callback - updating all boilers
+11:44:47:811 ->   [Time calc: Remaining 0 min 7 sec]
+11:44:47:814 -> [Boiler] Coffee display: 7 sec (arc: 2%)
+11:44:47:819 ->   [Time calc: Remaining 0 min 7 sec]
+11:44:47:822 -> [Boiler] Timer set to 1 second (fast updates)
+11:44:48:808 -> [Boiler] Timer callback - updating all boilers
+11:44:48:811 ->   [Time calc: Remaining 0 min 6 sec]
+11:44:48:814 -> [Boiler] Coffee display: 6 sec (arc: 2%)
+11:44:48:819 ->   [Time calc: Remaining 0 min 6 sec]
+11:44:48:822 -> [Boiler] Timer set to 1 second (fast updates)
+11:44:49:808 -> [Boiler] Timer callback - updating all boilers
+11:44:49:811 ->   [Time calc: Remaining 0 min 5 sec]
+11:44:49:814 -> [Boiler] Coffee display: 5 sec (arc: 1%)
+11:44:49:820 ->   [Time calc: Remaining 0 min 5 sec]
+11:44:49:822 -> [Boiler] Timer set to 1 second (fast updates)
+11:44:50:809 -> [Boiler] Timer callback - updating all boilers
+11:44:50:811 ->   [Time calc: Remaining 0 min 4 sec]
+11:44:50:814 -> [Boiler] Coffee display: 4 sec (arc: 1%)
+11:44:50:820 ->   [Time calc: Remaining 0 min 4 sec]
+11:44:50:822 -> [Boiler] Timer set to 1 second (fast updates)
+11:44:51:640 -> Battery voltage: 4.07
+11:44:51:808 -> [Boiler] Timer callback - updating all boilers
+11:44:51:811 ->   [Time calc: Remaining 0 min 3 sec]
+11:44:51:814 -> [Boiler] Coffee display: 3 sec (arc: 1%)
+11:44:51:819 ->   [Time calc: Remaining 0 min 3 sec]
+11:44:51:822 -> [Boiler] Timer set to 1 second (fast updates)
+11:44:52:808 -> [Boiler] Timer callback - updating all boilers
+11:44:52:811 ->   [Time calc: Remaining 0 min 2 sec]
+11:44:52:814 -> [Boiler] Coffee display: 2 sec (arc: 0%)
+11:44:52:819 ->   [Time calc: Remaining 0 min 2 sec]
+11:44:52:822 -> [Boiler] Timer set to 1 second (fast updates)
+11:44:53:808 -> [Boiler] Timer callback - updating all boilers
+11:44:53:811 ->   [Time calc: Remaining 0 min 1 sec]
+11:44:53:814 -> [Boiler] Coffee display: 1 sec (arc: 0%)
+11:44:53:819 ->   [Time calc: Remaining 0 min 1 sec]
+11:44:53:822 -> [Boiler] Timer set to 1 second (fast updates)
+11:44:54:808 -> [Boiler] Timer callback - updating all boilers
+11:44:54:811 -> [Boiler] Timer: Coffee -> READY
+11:44:54:814 -> [Boiler] No boilers heating, pausing timer
+11:45:05:412 -> *** WebSocket TEXT message received (2382 bytes) ***
+11:45:05:415 -> Raw message:
+11:45:05:418 -> MESSAGE
+11:45:05:418 -> destination:/ws/sn/MR028317/dashboard
+11:45:05:420 -> content-type:application/json
+11:45:05:423 -> subscription:d968cc75-0708-4513-9ea3-f15682e267b5
+11:45:05:429 -> message-id:073f23f7-6448-ecb5-2e04-93766a89df95-3234028
+11:45:05:431 -> content-length:2178
+11:45:05:434 -> 
+11:45:05:434 -> {"connected":true,"removedWidgets":[{"code":"CMMachineGroupStatus","index":1},{"code":"CMMachineModuleStatus","index":1},{"code":"CMSteamBoilerTemperature","index":1},{"code":"CMGroupDoses","index":1},{"code":"CMPreInfusionEnable","index":1},{"code":"CMPreInfusion","index":1},{"code":"CMBrewByWeightDoses","index":1},{"code":"CMCupWarmer","index":1},{"code":"CMHotWaterDose","index":1},{"code":"CMAutoFlush","index":1},{"code":"CMRinseFlush","index":1},{"code":"CMSteamFlush","index":1},{"code":"CMNoWater","index":1},{"code":"GMachineStatus","index":1},{"code":"GDoses","index":1},{"code":"GSingleDoseMode","index":1},{"code":"GBaristaLight","index":1},{"code":"GHopperOpened","index":1},{"code":"GSpeed","index":1},{"code":"GMirrorDoses","index":1},{"code":"GMoreDose","index":1},{"code":"GGrindWith","index":1},{"code":"CMModuleAndTapsTemperature","index":1}],"connectionDate":1762827148223,"widgets":[{"code":"CMMachineStatus","index":1,"output":{"status":"PoweredOn","availableModes":["BrewingMode","StandBy"],"mode":"BrewingMode","nextStatus":{"status":"StandBy","startTime":1762928922738},"brewingStartTime":null,"lastCoffee":{"time":1762927176703,"extractionSeconds":25.612,"doseMode":"Continuous","doseIndex":"Continuous","doseValue":null,"doseValueNumerator":null},"lastFlush":null}},{"code":"CMCoffeeBoiler","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":false,"targetTemperature":94.00,"targetTemperatureMin":80,"targetTemperatureMax":100,"targetTemperatureStep":0.1,"readyStartTime":null}},{"code":"CMSteamBoilerLevel","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":true,"targetLevel":"Level2","targetLevelSupported":true,"readyStartTime":null}},{"code":"CMPreBrewing","index":1,"output":{"availableModes":["PreBrewing","Disabled"],"mode":"PreBrewing","times":{"PreBrewing":[{"doseIndex":"ByGroup","seconds":{"Out":3.00,"In":2.00},"secondsMin":{"Out":1,"In":1},"secondsMax":{"Out":9,"In":9},"secondsStep":{"Out":0.1,"In":0.1}}]},"doseIndexSupported":false}},{"code":"CMBackFlush","index":1,"output":{"lastCleaningStartTime":1761071774016,"status":"Off"}}],"uuid":"fd880706-d2a3-459e-a48b-3765f4e42eab","commands":[]}
+11:45:05:623 -> Decoding message, length: 2382
+11:45:05:626 -> Header end position: 201
+11:45:05:629 -> Command: MESSAGE
+11:45:05:631 -> Body starts at position: 203
+11:45:05:631 -> Null terminator at position: 2381
+11:45:05:637 -> Body extracted, length: 2178
+11:45:05:637 -> ��� Decoded STOMP - command: MESSAGE
+11:45:05:642 -> Headers: destination:/ws/sn/MR028317/dashboard
+11:45:05:645 -> content-type:application/json
+11:45:05:648 -> subscription:d968cc75-0708-4513-9ea3-f15682e267b5
+11:45:05:654 -> message-id:073f23f7-6448-ecb5-2e04-93766a89df95-3234028
+11:45:05:656 -> content-length:2178
+11:45:05:659 -> Body: {"connected":true,"removedWidgets":[{"code":"CMMachineGroupStatus","index":1},{"code":"CMMachineModuleStatus","index":1},{"code":"CMSteamBoilerTemperature","index":1},{"code":"CMGroupDoses","index":1},{"code":"CMPreInfusionEnable","index":1},{"code":"CMPreInfusion","index":1},{"code":"CMBrewByWeightDoses","index":1},{"code":"CMCupWarmer","index":1},{"code":"CMHotWaterDose","index":1},{"code":"CMAutoFlush","index":1},{"code":"CMRinseFlush","index":1},{"code":"CMSteamFlush","index":1},{"code":"CMNoWater","index":1},{"code":"GMachineStatus","index":1},{"code":"GDoses","index":1},{"code":"GSingleDoseMode","index":1},{"code":"GBaristaLight","index":1},{"code":"GHopperOpened","index":1},{"code":"GSpeed","index":1},{"code":"GMirrorDoses","index":1},{"code":"GMoreDose","index":1},{"code":"GGrindWith","index":1},{"code":"CMModuleAndTapsTemperature","index":1}],"connectionDate":1762827148223,"widgets":[{"code":"CMMachineStatus","index":1,"output":{"status":"PoweredOn","availableModes":["BrewingMode","StandBy"],"mode":"BrewingMode","nextStatus":{"status":"StandBy","startTime":1762928922738},"brewingStartTime":null,"lastCoffee":{"time":1762927176703,"extractionSeconds":25.612,"doseMode":"Continuous","doseIndex":"Continuous","doseValue":null,"doseValueNumerator":null},"lastFlush":null}},{"code":"CMCoffeeBoiler","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":false,"targetTemperature":94.00,"targetTemperatureMin":80,"targetTemperatureMax":100,"targetTemperatureStep":0.1,"readyStartTime":null}},{"code":"CMSteamBoilerLevel","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":true,"targetLevel":"Level2","targetLevelSupported":true,"readyStartTime":null}},{"code":"CMPreBrewing","index":1,"output":{"availableModes":["PreBrewing","Disabled"],"mode":"PreBrewing","times":{"PreBrewing":[{"doseIndex":"ByGroup","seconds":{"Out":3.00,"In":2.00},"secondsMin":{"Out":1,"In":1},"secondsMax":{"Out":9,"In":9},"secondsStep":{"Out":0.1,"In":0.1}}]},"doseIndexSupported":false}},{"code":"CMBackFlush","index":1,"output":{"lastCleaningStartTime":1761071774016,"status":"Off"}}],"uuid":"fd880706-d2a3-459e-a48b-3765f4e42eab","commands":[]}
+11:45:05:848 -> ✓��✓ Received MESSAGE frame from server ✓✓✓
+11:45:05:854 -> Message body length: 2178
+11:45:05:856 -> Calling message callback...
+11:45:05:859 -> 
+11:45:05:859 -> ========== WEBSOCKET MESSAGE RECEIVED ==========
+11:45:05:862 -> Message length: 2178 bytes
+11:45:05:865 -> ✓ JSON parsed successfully
+11:45:05:867 -> Widgets count: 5
+11:45:05:870 -> ✓ Found CMMachineStatus widget
+11:45:05:873 -> 📊 Machine status: PoweredOn (mode: BrewingMode)
+11:45:05:879 -> ☕ Found CMCoffeeBoiler widget
+11:45:05:881 ->   Status: Ready, TargetTemp: 94.00°C, ReadyStartTime: 0
+11:45:05:884 -> ♨��  Found CMSteamBoilerLevel widget
+11:45:05:890 ->   Status: Ready, TargetLevel: Level2, ReadyStartTime: 0
+11:45:05:893 -> 
+11:45:05:893 -> ��� Updating boiler displays...
+11:45:05:898 -> [Boiler] Coffee target temp: 94��C
+11:45:05:901 -> [Boiler] Update Coffee - Machine: PoweredOn, Boiler: Ready, TargetReadyTime: 0
+11:45:05:907 -> [Boiler] Steam target level: L2
+11:45:05:909 -> [Boiler] Update Steam - Machine: PoweredOn, Boiler: Ready, TargetReadyTime: 0
+11:45:05:917 -> ===============================================
+11:45:05:920 -> 
+11:45:05:920 -> Callback completed.
+11:45:12:851 -> [STATUS] WebSocket is connected and running
+11:45:21:642 -> Battery voltage: 4.06
+
+
+11:58:12:358 -> message-id:3edf0334-22a6-a5c9-8f63-2f37012f9fe0-3237743
+11:58:12:361 -> content-length:2178
+11:58:12:364 -> Body: {"connected":true,"removedWidgets":[{"code":"CMMachineGroupStatus","index":1},{"code":"CMMachineModuleStatus","index":1},{"code":"CMSteamBoilerTemperature","index":1},{"code":"CMGroupDoses","index":1},{"code":"CMPreInfusionEnable","index":1},{"code":"CMPreInfusion","index":1},{"code":"CMBrewByWeightDoses","index":1},{"code":"CMCupWarmer","index":1},{"code":"CMHotWaterDose","index":1},{"code":"CMAutoFlush","index":1},{"code":"CMRinseFlush","index":1},{"code":"CMSteamFlush","index":1},{"code":"CMNoWater","index":1},{"code":"GMachineStatus","index":1},{"code":"GDoses","index":1},{"code":"GSingleDoseMode","index":1},{"code":"GBaristaLight","index":1},{"code":"GHopperOpened","index":1},{"code":"GSpeed","index":1},{"code":"GMirrorDoses","index":1},{"code":"GMoreDose","index":1},{"code":"GGrindWith","index":1},{"code":"CMModuleAndTapsTemperature","index":1}],"connectionDate":1762827148223,"widgets":[{"code":"CMMachineStatus","index":1,"output":{"status":"PoweredOn","availableModes":["BrewingMode","StandBy"],"mode":"BrewingMode","nextStatus":{"status":"StandBy","startTime":1762929790252},"brewingStartTime":null,"lastCoffee":{"time":1762927176703,"extractionSeconds":25.612,"doseMode":"Continuous","doseIndex":"Continuous","doseValue":null,"doseValueNumerator":null},"lastFlush":null}},{"code":"CMCoffeeBoiler","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":false,"targetTemperature":94.00,"targetTemperatureMin":80,"targetTemperatureMax":100,"targetTemperatureStep":0.1,"readyStartTime":null}},{"code":"CMSteamBoilerLevel","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":true,"targetLevel":"Level2","targetLevelSupported":true,"readyStartTime":null}},{"code":"CMPreBrewing","index":1,"output":{"availableModes":["PreBrewing","Disabled"],"mode":"PreBrewing","times":{"PreBrewing":[{"doseIndex":"ByGroup","seconds":{"Out":3.00,"In":2.00},"secondsMin":{"Out":1,"In":1},"secondsMax":{"Out":9,"In":9},"secondsStep":{"Out":0.1,"In":0.1}}]},"doseIndexSupported":false}},{"code":"CMBackFlush","index":1,"output":{"lastCleaningStartTime":1761071774016,"status":"Off"}}],"uuid":"346723a6-0466-4519-a764-89ad757aa4ff","commands":[]}
+11:58:12:552 -> ✓��✓ Received MESSAGE frame from server ✓✓✓
+11:58:12:558 -> Message body length: 2178
+11:58:12:561 -> Calling message callback...
+11:58:12:564 -> 
+11:58:12:564 -> ========== WEBSOCKET MESSAGE RECEIVED ==========
+11:58:12:566 -> Message length: 2178 bytes
+11:58:12:569 -> ✓ JSON parsed successfully
+11:58:12:572 -> Widgets count: 5
+11:58:12:575 -> ✓ Found CMMachineStatus widget
+11:58:12:577 -> 📊 Machine status: PoweredOn (mode: BrewingMode)
+11:58:12:583 -> ☕ Found CMCoffeeBoiler widget
+11:58:12:586 ->   Status: Ready, TargetTemp: 94.00°C, ReadyStartTime: 0
+11:58:12:589 -> ♨��  Found CMSteamBoilerLevel widget
+11:58:12:594 ->   Status: Ready, TargetLevel: Level2, ReadyStartTime: 0
+11:58:12:597 -> 
+11:58:12:597 -> ��� Updating boiler displays...
+11:58:12:602 -> [Boiler] Coffee target temp: 94��C
+11:58:12:605 -> [Boiler] Update Coffee - Machine: PoweredOn, Boiler: Ready, TargetReadyTime: 0
+11:58:12:611 -> [Boiler] Coffee -> READY (no heating needed)
+11:58:12:616 -> [Boiler] Timer set to 30 seconds (slow updates)
+11:58:12:619 -> [Boiler] Timer resumed
+11:58:12:622 -> [Boiler] Steam target level: [Boiler] Timer callback - updating all boilers
+11:58:12:627 -> L2
+11:58:12:627 -> [Boiler] Update Steam - Machine: PoweredOn, Boiler: Ready, TargetReadyTime: [Boiler] No boilers heating, pausing timer
+11:58:12:639 -> 0
+11:58:12:639 -> [Boiler] Steam -> READY (no heating needed)
+11:58:12:645 -> [Boiler] Timer set to 30 seconds (slow updates)
+11:58:12:647 -> [Boiler] Timer resumed
+11:58:12:650 -> ===============================================
+11:58:12:652 -> 
+11:58:12:652 -> Callback completed.
+11:58:13:927 -> [STATUS] WebSocket is connected and running
+11:58:16:210 -> *** WebSocket TEXT message received (2411 bytes) ***
+11:58:16:213 -> Raw message:
+11:58:16:216 -> MESSAGE
+11:58:16:216 -> destination:/ws/sn/MR028317/dashboard
+11:58:16:219 -> content-type:application/json
+11:58:16:221 -> subscription:1bddf629-4d72-47c0-8303-675b2959a704
+11:58:16:227 -> message-id:3edf0334-22a6-a5c9-8f63-2f37012f9fe0-3237757
+11:58:16:230 -> content-length:2207
+11:58:16:233 -> 
+11:58:16:233 -> {"connected":true,"removedWidgets":[{"code":"CMMachineGroupStatus","index":1},{"code":"CMMachineModuleStatus","index":1},{"code":"CMSteamBoilerTemperature","index":1},{"code":"CMGroupDoses","index":1},{"code":"CMPreInfusionEnable","index":1},{"code":"CMPreInfusion","index":1},{"code":"CMBrewByWeightDoses","index":1},{"code":"CMCupWarmer","index":1},{"code":"CMHotWaterDose","index":1},{"code":"CMAutoFlush","index":1},{"code":"CMRinseFlush","index":1},{"code":"CMSteamFlush","index":1},{"code":"GMachineStatus","index":1},{"code":"GDoses","index":1},{"code":"GSingleDoseMode","index":1},{"code":"GBaristaLight","index":1},{"code":"GHopperOpened","index":1},{"code":"GSpeed","index":1},{"code":"GMirrorDoses","index":1},{"code":"GMoreDose","index":1},{"code":"GGrindWith","index":1},{"code":"CMModuleAndTapsTemperature","index":1}],"connectionDate":1762827148223,"widgets":[{"code":"CMMachineStatus","index":1,"output":{"status":"PoweredOn","availableModes":["BrewingMode","StandBy"],"mode":"BrewingMode","nextStatus":{"status":"StandBy","startTime":1762929790252},"brewingStartTime":null,"lastCoffee":{"time":1762927176703,"extractionSeconds":25.612,"doseMode":"Continuous","doseIndex":"Continuous","doseValue":null,"doseValueNumerator":null},"lastFlush":null}},{"code":"CMCoffeeBoiler","index":1,"output":{"status":"NoWater","enabled":true,"enabledSupported":false,"targetTemperature":94.00,"targetTemperatureMin":80,"targetTemperatureMax":100,"targetTemperatureStep":0.1,"readyStartTime":null}},{"code":"CMSteamBoilerLevel","index":1,"output":{"status":"NoWater","enabled":true,"enabledSupported":true,"targetLevel":"Level2","targetLevelSupported":true,"readyStartTime":null}},{"code":"CMPreBrewing","index":1,"output":{"availableModes":["PreBrewing","Disabled"],"mode":"PreBrewing","times":{"PreBrewing":[{"doseIndex":"ByGroup","seconds":{"Out":3.00,"In":2.00},"secondsMin":{"Out":1,"In":1},"secondsMax":{"Out":9,"In":9},"secondsStep":{"Out":0.1,"In":0.1}}]},"doseIndexSupported":false}},{"code":"CMBackFlush","index":1,"output":{"lastCleaningStartTime":1761071774016,"status":"Off"}},{"code":"CMNoWater","index":1,"output":{"allarm":true}}],"uuid":"03145b9a-296f-4fbe-be83-7c937d34d430","commands":[]}
+11:58:16:424 -> Decoding message, length: 2411
+11:58:16:427 -> Header end position: 201
+11:58:16:430 -> Command: MESSAGE
+11:58:16:430 -> Body starts at position: 203
+11:58:16:432 -> Null terminator at position: 2410
+11:58:16:435 -> Body extracted, length: 2207
+11:58:16:438 -> ✓ Decoded STOMP - command: MESSAGE
+11:58:16:444 -> Headers: destination:/ws/sn/MR028317/dashboard
+11:58:16:446 -> content-type:application/json
+11:58:16:449 -> subscription:1bddf629-4d72-47c0-8303-675b2959a704
+11:58:16:455 -> message-id:3edf0334-22a6-a5c9-8f63-2f37012f9fe0-3237757
+11:58:16:457 -> content-length:2207
+11:58:16:460 -> Body: {"connected":true,"removedWidgets":[{"code":"CMMachineGroupStatus","index":1},{"code":"CMMachineModuleStatus","index":1},{"code":"CMSteamBoilerTemperature","index":1},{"code":"CMGroupDoses","index":1},{"code":"CMPreInfusionEnable","index":1},{"code":"CMPreInfusion","index":1},{"code":"CMBrewByWeightDoses","index":1},{"code":"CMCupWarmer","index":1},{"code":"CMHotWaterDose","index":1},{"code":"CMAutoFlush","index":1},{"code":"CMRinseFlush","index":1},{"code":"CMSteamFlush","index":1},{"code":"GMachineStatus","index":1},{"code":"GDoses","index":1},{"code":"GSingleDoseMode","index":1},{"code":"GBaristaLight","index":1},{"code":"GHopperOpened","index":1},{"code":"GSpeed","index":1},{"code":"GMirrorDoses","index":1},{"code":"GMoreDose","index":1},{"code":"GGrindWith","index":1},{"code":"CMModuleAndTapsTemperature","index":1}],"connectionDate":1762827148223,"widgets":[{"code":"CMMachineStatus","index":1,"output":{"status":"PoweredOn","availableModes":["BrewingMode","StandBy"],"mode":"BrewingMode","nextStatus":{"status":"StandBy","startTime":1762929790252},"brewingStartTime":null,"lastCoffee":{"time":1762927176703,"extractionSeconds":25.612,"doseMode":"Continuous","doseIndex":"Continuous","doseValue":null,"doseValueNumerator":null},"lastFlush":null}},{"code":"CMCoffeeBoiler","index":1,"output":{"status":"NoWater","enabled":true,"enabledSupported":false,"targetTemperature":94.00,"targetTemperatureMin":80,"targetTemperatureMax":100,"targetTemperatureStep":0.1,"readyStartTime":null}},{"code":"CMSteamBoilerLevel","index":1,"output":{"status":"NoWater","enabled":true,"enabledSupported":true,"targetLevel":"Level2","targetLevelSupported":true,"readyStartTime":null}},{"code":"CMPreBrewing","index":1,"output":{"availableModes":["PreBrewing","Disabled"],"mode":"PreBrewing","times":{"PreBrewing":[{"doseIndex":"ByGroup","seconds":{"Out":3.00,"In":2.00},"secondsMin":{"Out":1,"In":1},"secondsMax":{"Out":9,"In":9},"secondsStep":{"Out":0.1,"In":0.1}}]},"doseIndexSupported":false}},{"code":"CMBackFlush","index":1,"output":{"lastCleaningStartTime":1761071774016,"status":"Off"}},{"code":"CMNoWater","index":1,"output":{"allarm":true}}],"uuid":"03145b9a-296f-4fbe-be83-7c937d34d430","commands":[]}
+11:58:16:652 -> ✓✓✓ Received MESSAGE frame from server ✓✓✓
+11:58:16:657 -> Message body length: 2207
+11:58:16:660 -> Calling message callback...
+11:58:16:663 -> 
+11:58:16:663 -> ========== WEBSOCKET MESSAGE RECEIVED ==========
+11:58:16:666 -> Message length: 2207 bytes
+11:58:16:669 -> ✓ JSON parsed successfully
+11:58:16:671 -> Widgets count: 6
+11:58:16:675 -> ✓ Found CMMachineStatus widget
+11:58:16:677 -> 📊 Machine status: PoweredOn (mode: BrewingMode)
+11:58:16:680 -> ☕ Found CMCoffeeBoiler widget
+11:58:16:683 ->   Status: NoWater, TargetTemp: 94.00��C, ReadyStartTime: 0
+11:58:16:688 -> ♨️  Found CMSteamBoilerLevel widget
+11:58:16:694 ->   Status: NoWater, TargetLevel: Level2, ReadyStartTime: 0
+11:58:16:696 -> 
+11:58:16:696 -> 🔄 Updating boiler displays...
+11:58:16:699 -> [Boiler] Coffee target temp: 94°C
+11:58:16:705 -> [Boiler] Update Coffee - Machine: PoweredOn, Boiler: NoWater, TargetReadyTime: 0
+11:58:16:711 -> [Boiler] Steam target level: L2
+11:58:16:713 -> [Boiler] Update Steam - Machine: PoweredOn, Boiler: NoWater, TargetReadyTime: 0
+11:58:16:721 -> ===============================================
+11:58:16:725 -> 
+11:58:16:725 -> Callback completed.12:01:08:569 -> Message length: 2078 bytes
+12:01:08:571 -> ✓ JSON parsed successfully
+12:01:08:574 -> Widgets count: 5
+12:01:08:577 -> ✓ Found CMMachineStatus widget
+12:01:08:580 -> 📊 Machine status: StandBy (mode: StandBy)
+12:01:08:583 -> ☕ Found CMCoffeeBoiler widget
+12:01:08:586 ->   Status: StandBy, TargetTemp: 94.00°C, ReadyStartTime: 0
+12:01:08:591 -> ♨️  Found CMSteamBoilerLevel widget
+12:01:08:594 ->   Status: StandBy, TargetLevel: Level2, ReadyStartTime: 0
+12:01:08:599 -> 
+12:01:08:599 -> 🔄 Updating boiler displays...
+12:01:08:602 -> [Boiler] Coffee target temp: 94°C
+12:01:08:605 -> [Boiler] Update Coffee - Machine: StandBy, Boiler: StandBy, TargetReadyTime: 0
+12:01:08:613 -> [Boiler] Steam target level: L2
+12:01:08:616 -> [Boiler] Update Steam - Machine: StandBy, Boiler: StandBy, TargetReadyTime: 0
+12:01:08:622 -> 
+12:01:08:622 -> 📋 Command responses:
+12:01:08:624 ->   ✓ Command 6ce3fe0a-c70b-4376-a3b0-4412e72db2ea: Success
+12:01:08:630 -> ===============================================
+12:01:08:635 -> 
+12:01:08:635 -> Callback completed.
+12:01:11:406 -> *** WebSocket TEXT message received (2245 bytes) ***
+12:01:11:408 -> Raw message:
+12:01:11:411 -> MESSAGE
+12:01:11:411 -> destination:/ws/sn/MR028317/dashboard
+12:01:11:414 -> content-type:application/json
+12:01:11:417 -> subscription:5e3079ff-aebb-4886-b0e6-b0e413d286c8
+12:01:11:422 -> message-id:5a1b16d6-a910-95c2-2a22-3f08f29a2056-3238242
+12:01:11:425 -> content-length:2041
+12:01:11:428 -> 
+12:01:11:428 -> {"connected":true,"removedWidgets":[{"code":"CMMachineGroupStatus","index":1},{"code":"CMMachineModuleStatus","index":1},{"code":"CMSteamBoilerTemperature","index":1},{"code":"CMGroupDoses","index":1},{"code":"CMPreInfusionEnable","index":1},{"code":"CMPreInfusion","index":1},{"code":"CMBrewByWeightDoses","index":1},{"code":"CMCupWarmer","index":1},{"code":"CMHotWaterDose","index":1},{"code":"CMAutoFlush","index":1},{"code":"CMRinseFlush","index":1},{"code":"CMSteamFlush","index":1},{"code":"CMNoWater","index":1},{"code":"GMachineStatus","index":1},{"code":"GDoses","index":1},{"code":"GSingleDoseMode","index":1},{"code":"GBaristaLight","index":1},{"code":"GHopperOpened","index":1},{"code":"GSpeed","index":1},{"code":"GMirrorDoses","index":1},{"code":"GMoreDose","index":1},{"code":"GGrindWith","index":1},{"code":"CMModuleAndTapsTemperature","index":1}],"connectionDate":1762827148223,"widgets":[{"code":"CMMachineStatus","index":1,"output":{"status":"PoweredOn","availableModes":["BrewingMode","StandBy"],"mode":"BrewingMode","nextStatus":{"status":"StandBy","startTime":1762929969252},"brewingStartTime":null,"lastCoffee":null,"lastFlush":null}},{"code":"CMCoffeeBoiler","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":false,"targetTemperature":94.00,"targetTemperatureMin":80,"targetTemperatureMax":100,"targetTemperatureStep":0.1,"readyStartTime":null}},{"code":"CMSteamBoilerLevel","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":true,"targetLevel":"Level2","targetLevelSupported":true,"readyStartTime":null}},{"code":"CMPreBrewing","index":1,"output":{"availableModes":["PreBrewing","Disabled"],"mode":"PreBrewing","times":{"PreBrewing":[{"doseIndex":"ByGroup","seconds":{"Out":3.00,"In":2.00},"secondsMin":{"Out":1,"In":1},"secondsMax":{"Out":9,"In":9},"secondsStep":{"Out":0.1,"In":0.1}}]},"doseIndexSupported":false}},{"code":"CMBackFlush","index":1,"output":{"lastCleaningStartTime":1761071774016,"status":"Off"}}],"uuid":"57dcb728-28ff-45c5-b26b-dbf9af466ab9","commands":[]}
+12:01:11:605 -> Decoding message, length: 2245
+12:01:11:608 -> Header end position: 201
+12:01:11:611 -> Command: MESSAGE
+12:01:11:611 -> Body starts at position: 203
+12:01:11:614 -> Null terminator at position: 2244
+12:01:11:616 -> Body extracted, length: 2041
+12:01:11:619 -> ✓ Decoded STOMP - command: MESSAGE
+12:01:11:622 -> Headers: destination:/ws/sn/MR028317/dashboard
+12:01:11:627 -> content-type:application/json
+12:01:11:630 -> subscription:5e3079ff-aebb-4886-b0e6-b0e413d286c8
+12:01:11:633 -> message-id:5a1b16d6-a910-95c2-2a22-3f08f29a2056-3238242
+12:01:11:639 -> content-length:2041
+12:01:11:641 -> Body: {"connected":true,"removedWidgets":[{"code":"CMMachineGroupStatus","index":1},{"code":"CMMachineModuleStatus","index":1},{"code":"CMSteamBoilerTemperature","index":1},{"code":"CMGroupDoses","index":1},{"code":"CMPreInfusionEnable","index":1},{"code":"CMPreInfusion","index":1},{"code":"CMBrewByWeightDoses","index":1},{"code":"CMCupWarmer","index":1},{"code":"CMHotWaterDose","index":1},{"code":"CMAutoFlush","index":1},{"code":"CMRinseFlush","index":1},{"code":"CMSteamFlush","index":1},{"code":"CMNoWater","index":1},{"code":"GMachineStatus","index":1},{"code":"GDoses","index":1},{"code":"GSingleDoseMode","index":1},{"code":"GBaristaLight","index":1},{"code":"GHopperOpened","index":1},{"code":"GSpeed","index":1},{"code":"GMirrorDoses","index":1},{"code":"GMoreDose","index":1},{"code":"GGrindWith","index":1},{"code":"CMModuleAndTapsTemperature","index":1}],"connectionDate":1762827148223,"widgets":[{"code":"CMMachineStatus","index":1,"output":{"status":"PoweredOn","availableModes":["BrewingMode","StandBy"],"mode":"BrewingMode","nextStatus":{"status":"StandBy","startTime":1762929969252},"brewingStartTime":null,"lastCoffee":null,"lastFlush":null}},{"code":"CMCoffeeBoiler","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":false,"targetTemperature":94.00,"targetTemperatureMin":80,"targetTemperatureMax":100,"targetTemperatureStep":0.1,"readyStartTime":null}},{"code":"CMSteamBoilerLevel","index":1,"output":{"status":"Ready","enabled":true,"enabledSupported":true,"targetLevel":"Level2","targetLevelSupported":true,"readyStartTime":null}},{"code":"CMPreBrewing","index":1,"output":{"availableModes":["PreBrewing","Disabled"],"mode":"PreBrewing","times":{"PreBrewing":[{"doseIndex":"ByGroup","seconds":{"Out":3.00,"In":2.00},"secondsMin":{"Out":1,"In":1},"secondsMax":{"Out":9,"In":9},"secondsStep":{"Out":0.1,"In":0.1}}]},"doseIndexSupported":false}},{"code":"CMBackFlush","index":1,"output":{"lastCleaningStartTime":1761071774016,"status":"Off"}}],"uuid":"57dcb728-28ff-45c5-b26b-dbf9af466ab9","commands":[]}
+12:01:11:819 -> ✓✓✓ Received MESSAGE frame from server ✓✓✓
+12:01:11:825 -> Message body length: 2041
+12:01:11:825 -> Calling message callback...
+12:01:11:827 -> 
+12:01:11:827 -> ========== WEBSOCKET MESSAGE RECEIVED ==========
+12:01:11:833 -> Message length: 2041 bytes
+12:01:11:836 -> ✓ JSON parsed successfully
+12:01:11:839 -> Widgets count: 5
+12:01:11:839 -> ✓ Found CMMachineStatus widget
+12:01:11:841 -> 📊 Machine status: PoweredOn (mode: BrewingMode)
+12:01:11:847 -> ☕ Found CMCoffeeBoiler widget
+12:01:11:850 ->   Status: Ready, TargetTemp: 94.00°C, ReadyStartTime: 0
+12:01:11:855 -> ♨️  Found CMSteamBoilerLevel widget
+12:01:11:858 ->   Status: Ready, TargetLevel: Level2, ReadyStartTime: 0
+12:01:11:864 -> 
+12:01:11:864 -> 🔄 Updating boiler displays...
+12:01:11:866 -> [Boiler] Coffee target temp: 94°C
+12:01:11:869 -> [Boiler] Update Coffee - Machine: PoweredOn, Boiler: Ready, TargetReadyTime: 0
+12:01:11:877 -> [Boiler] Coffee -> READY (no heating needed)
+12:01:11:880 -> [Boiler] Timer set to 30 seconds (slow updates)
+12:01:11:886 -> [Boiler] Timer resumed
+12:01:11:886 -> [Boiler] Steam target level: L2
+12:01:11:889 -> [Boiler] Update Steam - Machine: PoweredOn, Boiler: Ready, TargetReadyTime: 0
+12:01:11:898 -> [Boiler] Steam -> READY (no heating needed)
+12:01:11:900 -> [Boiler] Timer set to 30 seconds (slow updates)
+12:01:11:905 -> ===============================================
+12:01:11:908 -> 
+12:01:11:908 -> Callback completed.
+12:01:13:955 -> [STATUS] WebSocket is connected and running
+12:01:24:046 -> Battery voltage: 4.09
+12:01:35:860 -> [Boiler] Timer callback - updating all boilers
+12:01:35:863 -> [Boiler] No boilers heating, pausing timer
+12:01:43:956 -> [STATUS] WebSocket is connected and running

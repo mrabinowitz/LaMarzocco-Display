@@ -35,6 +35,14 @@ typedef struct {
 } BoilerInfo;
 
 /**
+ * Set the GUI mutex for thread-safe LVGL access
+ * Must be called before boiler_display_init()
+ * 
+ * @param mutex FreeRTOS semaphore handle for GUI protection
+ */
+void boiler_display_set_mutex(void* mutex);
+
+/**
  * Initialize the boiler display system
  * Sets up references to existing UI components and initializes state
  */
@@ -65,9 +73,11 @@ void boiler_display_init(void);
  * @param machine_status Machine status string ("Off", "StandBy", "PoweredOn", etc.)
  * @param boiler_status Boiler status string ("Off", "StandBy", "HeatingUp", "Ready", etc.)
  * @param ready_start_time Time when boiler will be ready in ms (GMT Unix timestamp), 0 if not available/null
+ * @param target_value Target temperature (for coffee) or level string (for steam), can be NULL
  */
 void boiler_display_update(BoilerType type, const char* machine_status, 
-                           const char* boiler_status, int64_t ready_start_time);
+                           const char* boiler_status, int64_t ready_start_time,
+                           const char* target_value);
 
 /**
  * Update all boilers to OFF state
