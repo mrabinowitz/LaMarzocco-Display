@@ -60,7 +60,6 @@ extern lv_obj_t *ui_mainScreen;
 extern lv_obj_t *ui_WifiImage;
 extern lv_obj_t *ui_BatImage2;
 void ui_event_powerButton( lv_event_t * e);
-void ui_event_steamButton( lv_event_t * e);
 extern lv_obj_t *ui_powerButton;
 extern lv_obj_t *ui_steamButton;
 extern lv_obj_t *ui_timeLabel;
@@ -72,6 +71,11 @@ extern lv_obj_t *ui_CoffeeLabel;
 extern lv_obj_t *ui_SteamLabel;
 extern lv_obj_t *ui_CoffeeTempLabel;
 extern lv_obj_t *ui_BoilerTempLabel;
+extern lv_obj_t *ui_waterImage;
+extern lv_obj_t *ui_waterAlarmLabel;
+extern lv_obj_t *ui_SecPanel;
+extern lv_obj_t *ui_SecValueLabel;
+extern lv_obj_t *ui_SecondsLabel;
 // CUSTOM VARIABLES
 
 // EVENTS
@@ -86,12 +90,12 @@ LV_IMG_DECLARE( ui_img_power_png);   // assets/power.png
 LV_IMG_DECLARE( ui_img_steam_png);   // assets/steam.png
 LV_IMG_DECLARE( ui_img_coffee_png);   // assets/coffee.png
 LV_IMG_DECLARE( ui_img_wind_png);   // assets/wind.png
+LV_IMG_DECLARE( ui_img_drop_2_png);   // assets/drop_2.png
 LV_IMG_DECLARE( ui_img_battery2_png);   // assets/battery2.png
 LV_IMG_DECLARE( ui_img_battery3_png);   // assets/battery3.png
 LV_IMG_DECLARE( ui_img_wifi1_png);   // assets/wifi1.png
 LV_IMG_DECLARE( ui_img_wifi2_png);   // assets/wifi2.png
 LV_IMG_DECLARE( ui_img_wifi3_png);   // assets/wifi3.png
-LV_IMG_DECLARE( ui_img_drop_2_png);   // assets/drop_2.png
 
 // UI INIT
 void ui_init(void);

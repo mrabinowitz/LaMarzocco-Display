@@ -116,7 +116,7 @@ lv_img_set_src(ui_SteamImage, &ui_img_wind_png);
 lv_obj_set_width( ui_SteamImage, LV_SIZE_CONTENT);  /// 1
 lv_obj_set_height( ui_SteamImage, LV_SIZE_CONTENT);   /// 1
 lv_obj_set_x( ui_SteamImage, 35 );
-lv_obj_set_y( ui_SteamImage, 56 );
+lv_obj_set_y( ui_SteamImage, 55 );
 lv_obj_set_align( ui_SteamImage, LV_ALIGN_CENTER );
 lv_obj_add_flag( ui_SteamImage, LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
 lv_obj_clear_flag( ui_SteamImage, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
@@ -140,24 +140,75 @@ lv_label_set_text(ui_SteamLabel,"OFF");
 lv_obj_set_style_text_font(ui_SteamLabel, &lv_font_montserrat_26, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_CoffeeTempLabel = lv_label_create(ui_mainScreen);
-lv_obj_set_width( ui_CoffeeTempLabel, 42);
+lv_obj_set_width( ui_CoffeeTempLabel, 36);
 lv_obj_set_height( ui_CoffeeTempLabel, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_CoffeeTempLabel, -159 );
-lv_obj_set_y( ui_CoffeeTempLabel, 88 );
+lv_obj_set_x( ui_CoffeeTempLabel, -161 );
+lv_obj_set_y( ui_CoffeeTempLabel, 89 );
 lv_obj_set_align( ui_CoffeeTempLabel, LV_ALIGN_CENTER );
 lv_label_set_text(ui_CoffeeTempLabel,"");
-lv_obj_set_style_text_align(ui_CoffeeTempLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_BoilerTempLabel = lv_label_create(ui_mainScreen);
-lv_obj_set_width( ui_BoilerTempLabel, lv_pct(7));
+lv_obj_set_width( ui_BoilerTempLabel, lv_pct(8));
 lv_obj_set_height( ui_BoilerTempLabel, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_BoilerTempLabel, 34 );
-lv_obj_set_y( ui_BoilerTempLabel, 83 );
+lv_obj_set_x( ui_BoilerTempLabel, 36 );
+lv_obj_set_y( ui_BoilerTempLabel, 86 );
 lv_obj_set_align( ui_BoilerTempLabel, LV_ALIGN_CENTER );
 lv_label_set_text(ui_BoilerTempLabel,"");
-lv_obj_set_style_text_align(ui_BoilerTempLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN| LV_STATE_DEFAULT);
+
+ui_waterImage = lv_img_create(ui_mainScreen);
+lv_img_set_src(ui_waterImage, &ui_img_drop_2_png);
+lv_obj_set_width( ui_waterImage, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_waterImage, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_x( ui_waterImage, -47 );
+lv_obj_set_y( ui_waterImage, 5 );
+lv_obj_set_align( ui_waterImage, LV_ALIGN_CENTER );
+lv_obj_add_flag( ui_waterImage, LV_OBJ_FLAG_HIDDEN | LV_OBJ_FLAG_ADV_HITTEST );   /// Flags
+lv_obj_clear_flag( ui_waterImage, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+
+ui_waterAlarmLabel = lv_label_create(ui_mainScreen);
+lv_obj_set_width( ui_waterAlarmLabel, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_waterAlarmLabel, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_x( ui_waterAlarmLabel, -48 );
+lv_obj_set_y( ui_waterAlarmLabel, 63 );
+lv_obj_set_align( ui_waterAlarmLabel, LV_ALIGN_CENTER );
+lv_label_set_text(ui_waterAlarmLabel,"Refill Water");
+lv_obj_add_flag( ui_waterAlarmLabel, LV_OBJ_FLAG_HIDDEN );   /// Flags
+lv_obj_set_style_text_font(ui_waterAlarmLabel, &lv_font_montserrat_22, LV_PART_MAIN| LV_STATE_DEFAULT);
+
+ui_SecPanel = lv_obj_create(ui_mainScreen);
+lv_obj_set_width( ui_SecPanel, 150);
+lv_obj_set_height( ui_SecPanel, 150);
+lv_obj_set_x( ui_SecPanel, -89 );
+lv_obj_set_y( ui_SecPanel, -3 );
+lv_obj_set_align( ui_SecPanel, LV_ALIGN_CENTER );
+lv_obj_add_flag( ui_SecPanel, LV_OBJ_FLAG_HIDDEN );   /// Flags
+lv_obj_clear_flag( ui_SecPanel, LV_OBJ_FLAG_SCROLLABLE );    /// Flags
+lv_obj_set_style_radius(ui_SecPanel, 75, LV_PART_MAIN| LV_STATE_DEFAULT);
+lv_obj_set_style_border_color(ui_SecPanel, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT );
+lv_obj_set_style_border_opa(ui_SecPanel, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
+
+ui_SecValueLabel = lv_label_create(ui_SecPanel);
+lv_obj_set_width( ui_SecValueLabel, 116);
+lv_obj_set_height( ui_SecValueLabel, lv_pct(43));
+lv_obj_set_x( ui_SecValueLabel, 1 );
+lv_obj_set_y( ui_SecValueLabel, 1 );
+lv_obj_set_align( ui_SecValueLabel, LV_ALIGN_CENTER );
+lv_label_set_text(ui_SecValueLabel,"");
+lv_obj_set_style_text_color(ui_SecValueLabel, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT );
+lv_obj_set_style_text_opa(ui_SecValueLabel, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
+lv_obj_set_style_text_align(ui_SecValueLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN| LV_STATE_DEFAULT);
+lv_obj_set_style_text_font(ui_SecValueLabel, &lv_font_montserrat_40, LV_PART_MAIN| LV_STATE_DEFAULT);
+
+ui_SecondsLabel = lv_label_create(ui_mainScreen);
+lv_obj_set_width( ui_SecondsLabel, LV_SIZE_CONTENT);  /// 1
+lv_obj_set_height( ui_SecondsLabel, LV_SIZE_CONTENT);   /// 1
+lv_obj_set_x( ui_SecondsLabel, 111 );
+lv_obj_set_y( ui_SecondsLabel, -4 );
+lv_obj_set_align( ui_SecondsLabel, LV_ALIGN_CENTER );
+lv_label_set_text(ui_SecondsLabel,"Seconds");
+lv_obj_add_flag( ui_SecondsLabel, LV_OBJ_FLAG_HIDDEN );   /// Flags
+lv_obj_set_style_text_font(ui_SecondsLabel, &lv_font_montserrat_32, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 lv_obj_add_event_cb(ui_powerButton, ui_event_powerButton, LV_EVENT_ALL, NULL);
-lv_obj_add_event_cb(ui_steamButton, ui_event_steamButton, LV_EVENT_ALL, NULL);
 
 }

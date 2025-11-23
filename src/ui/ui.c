@@ -47,7 +47,6 @@ lv_obj_t *ui_mainScreen;
 lv_obj_t *ui_WifiImage;
 lv_obj_t *ui_BatImage2;
 void ui_event_powerButton( lv_event_t * e);
-void ui_event_steamButton( lv_event_t * e);
 lv_obj_t *ui_powerButton;
 lv_obj_t *ui_steamButton;
 lv_obj_t *ui_timeLabel;
@@ -59,6 +58,11 @@ lv_obj_t *ui_CoffeeLabel;
 lv_obj_t *ui_SteamLabel;
 lv_obj_t *ui_CoffeeTempLabel;
 lv_obj_t *ui_BoilerTempLabel;
+lv_obj_t *ui_waterImage;
+lv_obj_t *ui_waterAlarmLabel;
+lv_obj_t *ui_SecPanel;
+lv_obj_t *ui_SecValueLabel;
+lv_obj_t *ui_SecondsLabel;
 // CUSTOM VARIABLES
 
 // EVENTS
@@ -66,6 +70,7 @@ lv_obj_t *ui____initial_actions0;
 
 // IMAGES AND IMAGE SETS
 const lv_img_dsc_t *ui_imgset_battery[4] = {&ui_img_battery0_png, &ui_img_battery1_png, &ui_img_battery2_png, &ui_img_battery3_png};
+const lv_img_dsc_t *ui_imgset_drop_[1] = {&ui_img_drop_2_png};
 const lv_img_dsc_t *ui_imgset_wifi[4] = {&ui_img_wifi0_png, &ui_img_wifi1_png, &ui_img_wifi2_png, &ui_img_wifi3_png};
 
 ///////////////////// TEST LVGL SETTINGS ////////////////////
@@ -92,14 +97,6 @@ void ui_event_powerButton( lv_event_t * e) {
 
 if ( event_code == LV_EVENT_CLICKED) {
       turnOnMachine( e );
-}
-}
-
-void ui_event_steamButton( lv_event_t * e) {
-    lv_event_code_t event_code = lv_event_get_code(e);
-
-if ( event_code == LV_EVENT_CLICKED) {
-      toggleSteamBoiler( e );
 }
 }
 
