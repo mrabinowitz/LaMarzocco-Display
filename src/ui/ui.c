@@ -47,6 +47,7 @@ lv_obj_t *ui_mainScreen;
 lv_obj_t *ui_WifiImage;
 lv_obj_t *ui_BatImage2;
 void ui_event_powerButton( lv_event_t * e);
+void ui_event_steamButton( lv_event_t * e);
 lv_obj_t *ui_powerButton;
 lv_obj_t *ui_steamButton;
 lv_obj_t *ui_timeLabel;
@@ -97,6 +98,14 @@ void ui_event_powerButton( lv_event_t * e) {
 
 if ( event_code == LV_EVENT_CLICKED) {
       turnOnMachine( e );
+}
+}
+
+void ui_event_steamButton( lv_event_t * e) {
+    lv_event_code_t event_code = lv_event_get_code(e);
+
+if ( event_code == LV_EVENT_CLICKED) {
+      toggleSteamBoiler( e );
 }
 }
 

@@ -210,5 +210,6 @@ lv_obj_add_flag( ui_SecondsLabel, LV_OBJ_FLAG_HIDDEN );   /// Flags
 lv_obj_set_style_text_font(ui_SecondsLabel, &lv_font_montserrat_32, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 lv_obj_add_event_cb(ui_powerButton, ui_event_powerButton, LV_EVENT_ALL, NULL);
+lv_obj_add_event_cb(ui_steamButton, ui_event_steamButton, LV_EVENT_ALL, NULL);
 
 }

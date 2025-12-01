@@ -60,6 +60,7 @@ extern lv_obj_t *ui_mainScreen;
 extern lv_obj_t *ui_WifiImage;
 extern lv_obj_t *ui_BatImage2;
 void ui_event_powerButton( lv_event_t * e);
+void ui_event_steamButton( lv_event_t * e);
 extern lv_obj_t *ui_powerButton;
 extern lv_obj_t *ui_steamButton;
 extern lv_obj_t *ui_timeLabel;
