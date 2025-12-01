@@ -140,20 +140,22 @@ lv_label_set_text(ui_SteamLabel,"OFF");
 lv_obj_set_style_text_font(ui_SteamLabel, &lv_font_montserrat_26, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_CoffeeTempLabel = lv_label_create(ui_mainScreen);
-lv_obj_set_width( ui_CoffeeTempLabel, 36);
+lv_obj_set_width( ui_CoffeeTempLabel, 42);
 lv_obj_set_height( ui_CoffeeTempLabel, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_CoffeeTempLabel, -161 );
-lv_obj_set_y( ui_CoffeeTempLabel, 89 );
+lv_obj_set_x( ui_CoffeeTempLabel, -159 );
+lv_obj_set_y( ui_CoffeeTempLabel, 88 );
 lv_obj_set_align( ui_CoffeeTempLabel, LV_ALIGN_CENTER );
 lv_label_set_text(ui_CoffeeTempLabel,"");
+lv_obj_set_style_text_align(ui_CoffeeTempLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_BoilerTempLabel = lv_label_create(ui_mainScreen);
-lv_obj_set_width( ui_BoilerTempLabel, lv_pct(8));
+lv_obj_set_width( ui_BoilerTempLabel, lv_pct(7));
 lv_obj_set_height( ui_BoilerTempLabel, LV_SIZE_CONTENT);   /// 1
-lv_obj_set_x( ui_BoilerTempLabel, 36 );
-lv_obj_set_y( ui_BoilerTempLabel, 86 );
+lv_obj_set_x( ui_BoilerTempLabel, 34 );
+lv_obj_set_y( ui_BoilerTempLabel, 83 );
 lv_obj_set_align( ui_BoilerTempLabel, LV_ALIGN_CENTER );
 lv_label_set_text(ui_BoilerTempLabel,"");
+lv_obj_set_style_text_align(ui_BoilerTempLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN| LV_STATE_DEFAULT);
 
 ui_waterImage = lv_img_create(ui_mainScreen);
 lv_img_set_src(ui_waterImage, &ui_img_drop_2_png);
