@@ -16,16 +16,28 @@ LaMarzoccoWebSocket::LaMarzoccoWebSocket(LaMarzoccoClient& client)
 }
 
 LaMarzoccoWebSocket::~LaMarzoccoWebSocket() {
-    disconnect();
+    // Clear instance pointer first to prevent callbacks from accessing this object
     if (_instance == this) {
         _instance = nullptr;
     }
+    
+    // Disconnect and cleanup
+    disconnect();
+    
+    // Clear the event handler to prevent any pending callbacks
+    // Note: WebSocketsClient doesn't have a clear event handler method,
+    // but setting instance to null above should prevent callbacks from accessing this object
 }
 
 void LaMarzoccoWebSocket::_ws_event_handler(WStype_t type, uint8_t* payload, size_t length) {
-    if (_instance) {
-        _instance->_handle_websocket_event(type, payload, length);
+    // Safety check: ensure instance is valid before accessing
+    if (_instance == nullptr) {
+        return;  // Instance has been destroyed, ignore callback
     }
+    
+    // Call the instance's event handler
+    // The instance will do additional safety checks
+    _instance->_handle_websocket_event(type, payload, length);
 }
 
 String LaMarzoccoWebSocket::_encode_stomp_message(const String& command, const String& headers, const String& body) {
@@ -133,6 +145,11 @@ bool LaMarzoccoWebSocket::_decode_stomp_message(const String& message, String& c
 }
 
 void LaMarzoccoWebSocket::_handle_websocket_event(WStype_t type, uint8_t* payload, size_t length) {
+    // Safety check: ensure we're still the active instance
+    if (_instance != this) {
+        return;  // This object is no longer the active instance, ignore event
+    }
+    
     switch (type) {
         case WStype_DISCONNECTED:
             {
@@ -149,6 +166,12 @@ void LaMarzoccoWebSocket::_handle_websocket_event(WStype_t type, uint8_t* payloa
             
         case WStype_CONNECTED:
             {
+                // Additional safety check: ensure we're still the active instance
+                if (_instance != this) {
+                    debugln("WARNING: WebSocket connected but instance changed, ignoring");
+                    return;
+                }
+                
                 debugln("*** WebSocket TCP connection established ***");
                 debugln("WebSocket handshake complete, sending STOMP CONNECT...");
                 
@@ -445,13 +468,35 @@ bool LaMarzoccoWebSocket::connect(const String& serial_number) {
 }
 
 void LaMarzoccoWebSocket::disconnect() {
-    if (_connected && _subscription_id.length() > 0) {
+    // Save connected state before clearing it
+    bool was_connected = _connected;
+    
+    // Set connected to false first to prevent callbacks from trying to use the connection
+    _connected = false;
+    
+    // Disable auto-reconnect to prevent callbacks after disconnect
+    _ws.setReconnectInterval(0);  // 0 = disable auto-reconnect
+    
+    // Try to unsubscribe if we have a subscription and were connected
+    if (was_connected && _subscription_id.length() > 0) {
+        // Try to send unsubscribe message
+        // The WebSocket library should handle this gracefully
         String unsubscribe_headers = "id:" + _subscription_id + "\n";
         String unsubscribe_msg = _encode_stomp_message("UNSUBSCRIBE", unsubscribe_headers);
         _ws.sendTXT(unsubscribe_msg);
+        // Give it a moment to send
+        delay(50);
     }
+    
+    // Disconnect the WebSocket (this is safe to call even if already disconnected)
     _ws.disconnect();
-    _connected = false;
+    
+    // Clear subscription ID and cached token
+    _subscription_id = "";
+    _cached_token = "";
+    
+    // Re-enable reconnect interval for future connections
+    _ws.setReconnectInterval(5000);
 }
 
 void LaMarzoccoWebSocket::loop() {

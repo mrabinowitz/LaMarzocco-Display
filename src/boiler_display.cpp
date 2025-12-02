@@ -207,6 +207,12 @@ void boiler_display_update(BoilerType type, const char* machine_status,
             boiler_debugln(" -> READY");
             set_boiler_ready(boiler);
             restart_update_timer();
+        } else {
+            // Already in READY state, but force update display to ensure it's current
+            boiler_debug("[Boiler] ");
+            boiler_debug(boiler_type_name(type));
+            boiler_debugln(" already READY - forcing display update");
+            set_boiler_ready(boiler);  // Force update display
         }
     } else {
         // Boiler is HEATING
@@ -264,7 +270,7 @@ void boiler_display_timer_callback(lv_timer_t* timer) {
     int64_t now_ms = boiler_display_get_current_time_ms();
     bool any_heating = false;
     
-    // Update each boiler that is in HEATING state
+    // Update each boiler that is in HEATING or READY state
     for (int i = 0; i < 2; i++) {
         BoilerInfo* boiler = &g_boilers[i];
         
@@ -282,15 +288,37 @@ void boiler_display_timer_callback(lv_timer_t* timer) {
                 update_arc_and_label(boiler, remaining_sec);
                 any_heating = true;
             }
+        } else if (boiler->state == BOILER_STATE_READY) {
+            // Force periodic refresh of READY state to ensure display is current
+            // This helps catch any missed updates from WebSocket callbacks
+            boiler->last_remaining_sec = -1;  // Force update by resetting last value
+            set_boiler_ready(boiler);  // Refresh display
         }
     }
     
     // Restart timer with appropriate period
+    // Keep timer running even if only READY boilers exist, but at slower rate
+    bool any_ready = false;
+    for (int i = 0; i < 2; i++) {
+        if (g_boilers[i].state == BOILER_STATE_READY) {
+            any_ready = true;
+            break;
+        }
+    }
+    
     if (any_heating) {
         restart_update_timer();
+    } else if (any_ready) {
+        // Keep timer running at slow rate (5 seconds) to refresh READY state
+        lv_timer_set_period(g_update_timer, 5000);
+        if (g_timer_paused) {
+            lv_timer_resume(g_update_timer);
+            g_timer_paused = false;
+            boiler_debugln("[Boiler] Timer resumed for READY state refresh (5s)");
+        }
     } else {
-        // No boilers heating, pause timer
-        boiler_debugln("[Boiler] No boilers heating, pausing timer");
+        // No boilers active, pause timer
+        boiler_debugln("[Boiler] No boilers active, pausing timer");
         if (!g_timer_paused) {
             lv_timer_pause(g_update_timer);
             g_timer_paused = true;
@@ -345,7 +373,12 @@ static void update_arc_and_label(BoilerInfo* boiler, int remaining_seconds) {
     if (!boiler || !boiler->arc || !boiler->label) return;
     
     // Only update if value changed significantly (avoid flicker)
-    if (boiler->last_remaining_sec == remaining_seconds) {
+    // But allow updates when transitioning to/from ready state
+    bool force_update = (boiler->last_remaining_sec == -1) || 
+                        (remaining_seconds <= 0 && boiler->last_remaining_sec > 0) ||
+                        (remaining_seconds > 0 && boiler->last_remaining_sec <= 0);
+    
+    if (!force_update && boiler->last_remaining_sec == remaining_seconds) {
         return;  // No change
     }
     
@@ -437,14 +470,23 @@ static void set_boiler_ready(BoilerInfo* boiler) {
     if (!boiler || !boiler->arc || !boiler->label) return;
     
     boiler->state = BOILER_STATE_READY;
+    // Force update by resetting last_remaining_sec to ensure display refresh
     boiler->last_remaining_sec = 0;
     
     // Set arc to 100% and label to "READY" with mutex protection
+    // Force refresh by calling update multiple times if needed
     TAKE_MUTEX() {
         lv_arc_set_value(boiler->arc, 100);
         lv_label_set_text(boiler->label, "READY");
+        // Force a refresh by invalidating the object
+        lv_obj_invalidate(boiler->arc);
+        lv_obj_invalidate(boiler->label);
         GIVE_MUTEX();
     }
+    
+    boiler_debug("[Boiler] ");
+    boiler_debug(boiler_type_name(boiler->type));
+    boiler_debugln(" display updated to READY");
 }
 
 /**
