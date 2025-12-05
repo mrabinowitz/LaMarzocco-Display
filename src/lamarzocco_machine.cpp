@@ -2,6 +2,7 @@
 #include "config.h"
 #include "boiler_display.h"
 #include "water_alarm.h"
+#include "brewing_display.h"
 #include <ArduinoJson.h>
 
 LaMarzoccoMachine* LaMarzoccoMachine::_instance = nullptr;
@@ -48,6 +49,8 @@ void LaMarzoccoMachine::_websocket_message_handler(const String& message) {
         int64_t steam_ready_time = 0;
         const char* steam_target_level = nullptr;
         bool no_water_alarm = false;
+        bool is_brewing = false;
+        int64_t brewing_start_time = 0;
         
         // Parse widgets array to extract boiler and machine status
         if (doc.containsKey("widgets")) {
@@ -66,6 +69,20 @@ void LaMarzoccoMachine::_websocket_message_handler(const String& message) {
                     
                     machine_status = output["status"];
                     machine_mode = output["mode"];
+                    
+                    // Check if brewing
+                    if (machine_status && strcmp(machine_status, "Brewing") == 0) {
+                        is_brewing = true;
+                        // Extract brewingStartTime
+                        if (output.containsKey("brewingStartTime") && !output["brewingStartTime"].isNull()) {
+                            brewing_start_time = output["brewingStartTime"].as<long long>();
+                            Serial.print("☕ Brewing started at: ");
+                            Serial.println((long long)brewing_start_time);
+                        }
+                    } else {
+                        is_brewing = false;
+                        brewing_start_time = 0;
+                    }
                     
                     if (machine_status) {
                         _instance->_power_state = (strcmp(machine_status, "PoweredOn") == 0);
@@ -154,6 +171,9 @@ void LaMarzoccoMachine::_websocket_message_handler(const String& message) {
         
         // Update water alarm state
         water_alarm_set(no_water_alarm);
+        
+        // Update brewing display
+        brewing_display_update(is_brewing, brewing_start_time);
         
         // Update boiler displays if we have machine status
         // Boiler displays (labels) continue to update even during water alarm
