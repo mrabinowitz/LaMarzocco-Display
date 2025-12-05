@@ -185,6 +185,13 @@ void boiler_display_update(BoilerType type, const char* machine_status,
             boiler_debugln(" -> READY (no heating needed)");
             set_boiler_ready(boiler);
             restart_update_timer();
+        } else {
+            // Already in READY state, but force update display to ensure it's current
+            // This ensures the display updates even if it was showing old countdown values
+            boiler_debug("[Boiler] ");
+            boiler_debug(boiler_type_name(type));
+            boiler_debugln(" already READY - forcing display update (callback received)");
+            set_boiler_ready(boiler);  // Force update display
         }
         return;
     }
@@ -209,9 +216,10 @@ void boiler_display_update(BoilerType type, const char* machine_status,
             restart_update_timer();
         } else {
             // Already in READY state, but force update display to ensure it's current
+            // Always update even if already READY to catch any stale display values
             boiler_debug("[Boiler] ");
             boiler_debug(boiler_type_name(type));
-            boiler_debugln(" already READY - forcing display update");
+            boiler_debugln(" already READY - forcing display update (callback received)");
             set_boiler_ready(boiler);  // Force update display
         }
     } else {
@@ -224,6 +232,7 @@ void boiler_display_update(BoilerType type, const char* machine_status,
             restart_update_timer();
         } else {
             // Update the display with current countdown
+            // Always update to ensure display stays current even if value hasn't changed
             update_arc_and_label(boiler, remaining_sec);
         }
     }
@@ -374,12 +383,19 @@ static void update_arc_and_label(BoilerInfo* boiler, int remaining_seconds) {
     
     // Only update if value changed significantly (avoid flicker)
     // But allow updates when transitioning to/from ready state
+    // Also allow updates when last_remaining_sec is 0 (READY state) to force refresh
     bool force_update = (boiler->last_remaining_sec == -1) || 
                         (remaining_seconds <= 0 && boiler->last_remaining_sec > 0) ||
-                        (remaining_seconds > 0 && boiler->last_remaining_sec <= 0);
+                        (remaining_seconds > 0 && boiler->last_remaining_sec <= 0) ||
+                        (boiler->last_remaining_sec == 0 && remaining_seconds <= 0);  // Force refresh when READY
     
+    // Always update if value changed, or if we're forcing an update
+    // For callbacks, we want to ensure display is always current, so we update even if value hasn't changed
+    // This helps catch any display sync issues where the screen shows stale values
     if (!force_update && boiler->last_remaining_sec == remaining_seconds) {
-        return;  // No change
+        // Still update to ensure display is current (helps with stale "6 sec" or "9 sec" displays)
+        // This is especially important when callbacks are received for READY boilers
+        force_update = true;
     }
     
     boiler->last_remaining_sec = remaining_seconds;
@@ -410,6 +426,9 @@ static void update_arc_and_label(BoilerInfo* boiler, int remaining_seconds) {
     TAKE_MUTEX() {
         lv_arc_set_value(boiler->arc, arc_value);
         lv_label_set_text(boiler->label, label_text);
+        // Force a refresh by invalidating the objects to ensure display updates
+        lv_obj_invalidate(boiler->arc);
+        lv_obj_invalidate(boiler->label);
         GIVE_MUTEX();
     }
     
@@ -470,19 +489,26 @@ static void set_boiler_ready(BoilerInfo* boiler) {
     if (!boiler || !boiler->arc || !boiler->label) return;
     
     boiler->state = BOILER_STATE_READY;
-    // Force update by resetting last_remaining_sec to ensure display refresh
-    boiler->last_remaining_sec = 0;
+    // Reset last_remaining_sec to -1 to force update on next callback
+    // This ensures display updates even if already showing READY
+    boiler->last_remaining_sec = -1;
     
     // Set arc to 100% and label to "READY" with mutex protection
-    // Force refresh by calling update multiple times if needed
+    // Force refresh by invalidating objects to ensure display updates
     TAKE_MUTEX() {
         lv_arc_set_value(boiler->arc, 100);
         lv_label_set_text(boiler->label, "READY");
-        // Force a refresh by invalidating the object
+        // Force a refresh by invalidating the objects
         lv_obj_invalidate(boiler->arc);
         lv_obj_invalidate(boiler->label);
+        // Also mark as dirty to ensure redraw
+        lv_obj_mark_layout_as_dirty(boiler->arc);
+        lv_obj_mark_layout_as_dirty(boiler->label);
         GIVE_MUTEX();
     }
+    
+    // Update last_remaining_sec to 0 to track READY state (0 seconds remaining)
+    boiler->last_remaining_sec = 0;
     
     boiler_debug("[Boiler] ");
     boiler_debug(boiler_type_name(boiler->type));
