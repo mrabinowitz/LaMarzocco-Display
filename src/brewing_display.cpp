@@ -556,9 +556,11 @@ int64_t brewing_display_get_current_time_ms(void) {
 
 /**
  * Check if brewing mode is currently active
+ * Returns true for BOTH active brewing and flashing states
+ * This ensures normal UI stays hidden during the entire brewing sequence
  */
 bool brewing_display_is_active(void) {
-    return g_initialized && (g_state == BREWING_STATE_ACTIVE);
+    return g_initialized && (g_state == BREWING_STATE_ACTIVE || g_state == BREWING_STATE_FLASHING);
 }
 
 /**
