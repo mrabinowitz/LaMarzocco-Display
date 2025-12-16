@@ -45,6 +45,21 @@ void brewing_display_timer_callback(lv_timer_t* timer);
  */
 int64_t brewing_display_get_current_time_ms(void);
 
+/**
+ * Check GPIO pin for brewing simulation mode
+ * Should be called regularly from main loop
+ * GPIO LOW (GND) = enter brewing mode
+ * GPIO HIGH = exit brewing mode
+ */
+void brewing_display_check_gpio_simulation(void);
+
+/**
+ * Check if brewing mode is currently active
+ * 
+ * @return true if brewing is active, false otherwise
+ */
+bool brewing_display_is_active(void);
+
 #ifdef __cplusplus
 }
 #endif

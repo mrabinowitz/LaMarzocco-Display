@@ -1,4 +1,5 @@
 #include "boiler_display.h"
+#include "brewing_display.h"
 #include "ui/ui.h"
 #include <Arduino.h>
 #include <string.h>
@@ -424,8 +425,23 @@ static void update_arc_and_label(BoilerInfo* boiler, int remaining_seconds) {
     
     // Update arc and label with mutex protection
     TAKE_MUTEX() {
+        // Check if brewing is active - if so, keep arcs and labels hidden
+        bool brewing_active = brewing_display_is_active();
+        
+        if (!brewing_active) {
+            // Only show arcs and labels if brewing is NOT active
+            lv_obj_clear_flag(boiler->arc, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(boiler->label, LV_OBJ_FLAG_HIDDEN);
+        } else {
+            // Brewing is active - keep them hidden
+            lv_obj_add_flag(boiler->arc, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(boiler->label, LV_OBJ_FLAG_HIDDEN);
+        }
+        
+        // Update values even if hidden (so they're correct when shown later)
         lv_arc_set_value(boiler->arc, arc_value);
         lv_label_set_text(boiler->label, label_text);
+        
         // Force a refresh by invalidating the objects to ensure display updates
         lv_obj_invalidate(boiler->arc);
         lv_obj_invalidate(boiler->label);
@@ -453,8 +469,26 @@ static void set_boiler_off(BoilerInfo* boiler) {
     
     // Set arc to 0% and label to "OFF" with mutex protection
     TAKE_MUTEX() {
+        // Check if brewing is active - if so, keep arcs and labels hidden
+        bool brewing_active = brewing_display_is_active();
+        
+        if (!brewing_active) {
+            // Only show arcs and labels if brewing is NOT active
+            lv_obj_clear_flag(boiler->arc, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(boiler->label, LV_OBJ_FLAG_HIDDEN);
+        } else {
+            // Brewing is active - keep them hidden
+            lv_obj_add_flag(boiler->arc, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(boiler->label, LV_OBJ_FLAG_HIDDEN);
+        }
+        
+        // Update values even if hidden (so they're correct when shown later)
         lv_arc_set_value(boiler->arc, 0);
         lv_label_set_text(boiler->label, "OFF");
+        
+        // Invalidate to ensure display updates
+        lv_obj_invalidate(boiler->arc);
+        lv_obj_invalidate(boiler->label);
         GIVE_MUTEX();
     }
 }
@@ -496,8 +530,23 @@ static void set_boiler_ready(BoilerInfo* boiler) {
     // Set arc to 100% and label to "READY" with mutex protection
     // Force refresh by invalidating objects to ensure display updates
     TAKE_MUTEX() {
+        // Check if brewing is active - if so, keep arcs and labels hidden
+        bool brewing_active = brewing_display_is_active();
+        
+        if (!brewing_active) {
+            // Only show arcs and labels if brewing is NOT active
+            lv_obj_clear_flag(boiler->arc, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_clear_flag(boiler->label, LV_OBJ_FLAG_HIDDEN);
+        } else {
+            // Brewing is active - keep them hidden
+            lv_obj_add_flag(boiler->arc, LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(boiler->label, LV_OBJ_FLAG_HIDDEN);
+        }
+        
+        // Update values even if hidden (so they're correct when shown later)
         lv_arc_set_value(boiler->arc, 100);
         lv_label_set_text(boiler->label, "READY");
+        
         // Force a refresh by invalidating the objects
         lv_obj_invalidate(boiler->arc);
         lv_obj_invalidate(boiler->label);

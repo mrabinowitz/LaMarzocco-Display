@@ -223,6 +223,9 @@ void loop()
   updateStatusImages();  // Update battery and WiFi images (initial + every 30 seconds)
   checkWiFiConnection(); // Monitor WiFi connection and redirect if disconnected
   
+  // Check GPIO 15 for brewing simulation mode
+  brewing_display_check_gpio_simulation();
+  
   // Handle websocket and machine loop - MUST be called frequently
   // WebSocket requires regular loop() calls to process messages
   if (g_machine) {

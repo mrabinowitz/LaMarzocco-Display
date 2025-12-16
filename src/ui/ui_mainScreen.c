@@ -198,6 +198,7 @@ lv_obj_set_x( ui_SecValueLabel, 1 );
 lv_obj_set_y( ui_SecValueLabel, 1 );
 lv_obj_set_align( ui_SecValueLabel, LV_ALIGN_CENTER );
 lv_label_set_text(ui_SecValueLabel,"");
+lv_obj_add_flag( ui_SecValueLabel, LV_OBJ_FLAG_HIDDEN );   /// Flags
 lv_obj_set_style_text_color(ui_SecValueLabel, lv_color_hex(0x000000), LV_PART_MAIN | LV_STATE_DEFAULT );
 lv_obj_set_style_text_opa(ui_SecValueLabel, 255, LV_PART_MAIN| LV_STATE_DEFAULT);
 lv_obj_set_style_text_align(ui_SecValueLabel, LV_TEXT_ALIGN_CENTER, LV_PART_MAIN| LV_STATE_DEFAULT);

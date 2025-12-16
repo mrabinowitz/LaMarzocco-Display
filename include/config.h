@@ -16,6 +16,7 @@
 static constexpr const char *NTP_SERVER = "pool.ntp.org";
 
 #define  BATTERY_VOLTAGE_PIN 4
+#define  BREWING_SIM_PIN 15  // GPIO 15 for brewing simulation mode (LOW = brewing, HIGH = normal)
 
 #define uS_TO_S_FACTOR 1000000ULL
 
