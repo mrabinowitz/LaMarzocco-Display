@@ -177,6 +177,25 @@ void boiler_display_update(BoilerType type, const char* machine_status,
         return;
     }
     
+    // Check if boiler status is explicitly "Ready"
+    if (strcmp(boiler_status, "Ready") == 0) {
+        // Boiler is READY - set to READY state immediately
+        if (boiler->state != BOILER_STATE_READY) {
+            boiler_debug("[Boiler] ");
+            boiler_debug(boiler_type_name(type));
+            boiler_debugln(" -> READY (status is Ready)");
+            set_boiler_ready(boiler);
+            restart_update_timer();
+        } else {
+            // Already in READY state, but force update display to ensure it's current
+            boiler_debug("[Boiler] ");
+            boiler_debug(boiler_type_name(type));
+            boiler_debugln(" already READY - forcing display update (status is Ready)");
+            set_boiler_ready(boiler);  // Force update display
+        }
+        return;
+    }
+    
     // Machine is ON (PoweredOn, BrewingMode, etc.) and boiler is enabled
     if (ready_start_time <= 0) {
         // No valid ready start time - machine is ON but boiler is already READY (not heating)
