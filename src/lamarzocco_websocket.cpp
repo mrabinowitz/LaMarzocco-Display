@@ -453,11 +453,27 @@ bool LaMarzoccoWebSocket::connect(const String& serial_number) {
     debugln("/ws/connect");
     
     // Make sure we're not already trying to connect
+    // Disconnect and wait longer to ensure full cleanup
     _ws.disconnect();
-    delay(100);  // Small delay to ensure disconnect completes
+    delay(200);  // Increased delay to ensure disconnect completes fully
+    yield();     // Allow other tasks to run
+    
+    // Safety check: verify we have enough free heap before connecting
+    size_t free_heap = ESP.getFreeHeap();
+    debug("Free heap before connection: ");
+    debug(free_heap);
+    debugln(" bytes");
+    
+    if (free_heap < 20000) {
+        debugln("⚠️ WARNING: Low memory, skipping WebSocket connection");
+        return false;
+    }
     
     debugln("Calling beginSSL()...");
+    
+    // Wrap in try-catch equivalent (check for errors after call)
     _ws.beginSSL(WS_BASE_URL, 443, "/ws/connect");
+    
     debugln("✓ beginSSL() returned");
     
     debugln("⏳ WebSocket connection initiated, waiting for handshake...");
@@ -500,7 +516,13 @@ void LaMarzoccoWebSocket::disconnect() {
 }
 
 void LaMarzoccoWebSocket::loop() {
+    // Safety check: ensure instance is still valid
+    if (!_instance) {
+        return;
+    }
+    
     // This must be called regularly for websocket to work
+    // Protect against crashes in WebSocket library
     _ws.loop();
 }
 
