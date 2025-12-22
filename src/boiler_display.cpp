@@ -1,5 +1,6 @@
 #include "boiler_display.h"
 #include "brewing_display.h"
+#include "water_alarm.h"  // Need to check water alarm state
 #include "ui/ui.h"
 #include <Arduino.h>
 #include <string.h>
@@ -31,6 +32,7 @@ static int calculate_remaining_seconds(int64_t ready_start_time, int64_t now_ms)
 static void set_boiler_off(BoilerInfo* boiler);
 static void set_boiler_heating(BoilerInfo* boiler, int64_t ready_start_time);
 static void set_boiler_ready(BoilerInfo* boiler);
+static void set_boiler_ready_no_mutex(BoilerInfo* boiler);  // Internal version without mutex
 static void restart_update_timer(void);
 static const char* boiler_type_name(BoilerType type);
 
@@ -108,12 +110,12 @@ void boiler_display_update(BoilerType type, const char* machine_status,
             if (type == BOILER_COFFEE) {
                 // Coffee boiler: display temperature (e.g., "94°C")
                 lv_label_set_text(ui_CoffeeTempLabel, target_value);
-                boiler_debug("[Boiler] Coffee target temp: ");
+                boiler_debug("[Coffee] Target temp: ");
                 boiler_debugln(target_value);
             } else if (type == BOILER_STEAM) {
                 // Steam boiler: display level (e.g., "L2" for Level2)
                 lv_label_set_text(ui_BoilerTempLabel, target_value);
-                boiler_debug("[Boiler] Steam target level: ");
+                boiler_debug("[Steam] Target level: ");
                 boiler_debugln(target_value);
             }
             GIVE_MUTEX();
@@ -127,9 +129,9 @@ void boiler_display_update(BoilerType type, const char* machine_status,
     
     BoilerInfo* boiler = &g_boilers[type];
     
-    boiler_debug("[Boiler] Update ");
+    boiler_debug("[");
     boiler_debug(boiler_type_name(type));
-    boiler_debug(" - Machine: ");
+    boiler_debug("] Update - Machine: ");
     boiler_debug(machine_status);
     boiler_debug(", Boiler: ");
     boiler_debug(boiler_status);
@@ -155,9 +157,9 @@ void boiler_display_update(BoilerType type, const char* machine_status,
     if (strcmp(machine_status, "Off") == 0 || strcmp(machine_status, "StandBy") == 0) {
         // Machine is OFF or in StandBy - set boiler to OFF
         if (boiler->state != BOILER_STATE_OFF) {
-            boiler_debug("[Boiler] ");
+            boiler_debug("[");
             boiler_debug(boiler_type_name(type));
-            boiler_debugln(" -> OFF (machine off/standby)");
+            boiler_debugln("] -> OFF (machine off/standby)");
             set_boiler_off(boiler);
             restart_update_timer();  // Recalculate timer period
         }
@@ -168,9 +170,9 @@ void boiler_display_update(BoilerType type, const char* machine_status,
     if (strcmp(boiler_status, "Off") == 0 || strcmp(boiler_status, "StandBy") == 0) {
         // Boiler is disabled - set to OFF
         if (boiler->state != BOILER_STATE_OFF) {
-            boiler_debug("[Boiler] ");
+            boiler_debug("[");
             boiler_debug(boiler_type_name(type));
-            boiler_debugln(" -> OFF (boiler disabled)");
+            boiler_debugln("] -> OFF (boiler disabled)");
             set_boiler_off(boiler);
             restart_update_timer();  // Recalculate timer period
         }
@@ -181,16 +183,16 @@ void boiler_display_update(BoilerType type, const char* machine_status,
     if (strcmp(boiler_status, "Ready") == 0) {
         // Boiler is READY - set to READY state immediately
         if (boiler->state != BOILER_STATE_READY) {
-            boiler_debug("[Boiler] ");
+            boiler_debug("[");
             boiler_debug(boiler_type_name(type));
-            boiler_debugln(" -> READY (status is Ready)");
+            boiler_debugln("] -> READY (status is Ready)");
             set_boiler_ready(boiler);
             restart_update_timer();
         } else {
             // Already in READY state, but force update display to ensure it's current
-            boiler_debug("[Boiler] ");
+            boiler_debug("[");
             boiler_debug(boiler_type_name(type));
-            boiler_debugln(" already READY - forcing display update (status is Ready)");
+            boiler_debugln("] Already READY - forcing display update (status is Ready)");
             set_boiler_ready(boiler);  // Force update display
         }
         return;
@@ -200,17 +202,17 @@ void boiler_display_update(BoilerType type, const char* machine_status,
     if (ready_start_time <= 0) {
         // No valid ready start time - machine is ON but boiler is already READY (not heating)
         if (boiler->state != BOILER_STATE_READY) {
-            boiler_debug("[Boiler] ");
+            boiler_debug("[");
             boiler_debug(boiler_type_name(type));
-            boiler_debugln(" -> READY (no heating needed)");
+            boiler_debugln("] -> READY (no heating needed)");
             set_boiler_ready(boiler);
             restart_update_timer();
         } else {
             // Already in READY state, but force update display to ensure it's current
             // This ensures the display updates even if it was showing old countdown values
-            boiler_debug("[Boiler] ");
+            boiler_debug("[");
             boiler_debug(boiler_type_name(type));
-            boiler_debugln(" already READY - forcing display update (callback received)");
+            boiler_debugln("] Already READY - forcing display update (callback received)");
             set_boiler_ready(boiler);  // Force update display
         }
         return;
@@ -220,34 +222,34 @@ void boiler_display_update(BoilerType type, const char* machine_status,
     int64_t now_ms = boiler_display_get_current_time_ms();
     int remaining_sec = calculate_remaining_seconds(ready_start_time, now_ms);
     
-    boiler_debug("[Boiler] ");
+    boiler_debug("[");
     boiler_debug(boiler_type_name(type));
-    boiler_debug(" remaining: ");
+    boiler_debug("] Remaining: ");
     boiler_debug(remaining_sec);
     boiler_debugln(" sec");
     
     if (remaining_sec <= 0) {
         // Boiler is READY
         if (boiler->state != BOILER_STATE_READY) {
-            boiler_debug("[Boiler] ");
+            boiler_debug("[");
             boiler_debug(boiler_type_name(type));
-            boiler_debugln(" -> READY");
+            boiler_debugln("] -> READY");
             set_boiler_ready(boiler);
             restart_update_timer();
         } else {
             // Already in READY state, but force update display to ensure it's current
             // Always update even if already READY to catch any stale display values
-            boiler_debug("[Boiler] ");
+            boiler_debug("[");
             boiler_debug(boiler_type_name(type));
-            boiler_debugln(" already READY - forcing display update (callback received)");
+            boiler_debugln("] Already READY - forcing display update (callback received)");
             set_boiler_ready(boiler);  // Force update display
         }
     } else {
         // Boiler is HEATING
         if (boiler->state != BOILER_STATE_HEATING || boiler->ready_start_time != ready_start_time) {
-            boiler_debug("[Boiler] ");
+            boiler_debug("[");
             boiler_debug(boiler_type_name(type));
-            boiler_debugln(" -> HEATING");
+            boiler_debugln("] -> HEATING");
             set_boiler_heating(boiler, ready_start_time);
             restart_update_timer();
         } else {
@@ -308,10 +310,11 @@ void boiler_display_timer_callback(lv_timer_t* timer) {
             
             if (remaining_sec <= 0) {
                 // Transition to READY
-                boiler_debug("[Boiler] Timer: ");
+                boiler_debug("[");
                 boiler_debug(boiler_type_name(boiler->type));
-                boiler_debugln(" -> READY");
-                set_boiler_ready(boiler);
+                boiler_debugln("] Timer: -> READY");
+                // Use no_mutex version since we're in timer callback (LVGL task context)
+                set_boiler_ready_no_mutex(boiler);
             } else {
                 // Update countdown display
                 update_arc_and_label(boiler, remaining_sec);
@@ -321,7 +324,8 @@ void boiler_display_timer_callback(lv_timer_t* timer) {
             // Force periodic refresh of READY state to ensure display is current
             // This helps catch any missed updates from WebSocket callbacks
             boiler->last_remaining_sec = -1;  // Force update by resetting last value
-            set_boiler_ready(boiler);  // Refresh display
+            // Use no_mutex version since we're in timer callback (LVGL task context)
+            set_boiler_ready_no_mutex(boiler);  // Refresh display
         }
     }
     
@@ -444,15 +448,16 @@ static void update_arc_and_label(BoilerInfo* boiler, int remaining_seconds) {
     
     // Update arc and label with mutex protection
     TAKE_MUTEX() {
-        // Check if brewing is active - if so, keep arcs and labels hidden
+        // Check if brewing OR water alarm is active - if so, keep arcs and labels hidden
         bool brewing_active = brewing_display_is_active();
+        bool water_alarm_active = water_alarm_is_active();
         
-        if (!brewing_active) {
-            // Only show arcs and labels if brewing is NOT active
+        if (!brewing_active && !water_alarm_active) {
+            // Only show arcs and labels if BOTH brewing AND water alarm are NOT active
             lv_obj_clear_flag(boiler->arc, LV_OBJ_FLAG_HIDDEN);
             lv_obj_clear_flag(boiler->label, LV_OBJ_FLAG_HIDDEN);
         } else {
-            // Brewing is active - keep them hidden
+            // Brewing or water alarm is active - keep them hidden
             lv_obj_add_flag(boiler->arc, LV_OBJ_FLAG_HIDDEN);
             lv_obj_add_flag(boiler->label, LV_OBJ_FLAG_HIDDEN);
         }
@@ -467,9 +472,9 @@ static void update_arc_and_label(BoilerInfo* boiler, int remaining_seconds) {
         GIVE_MUTEX();
     }
     
-    boiler_debug("[Boiler] ");
+    boiler_debug("[");
     boiler_debug(boiler_type_name(boiler->type));
-    boiler_debug(" display: ");
+    boiler_debug("] Display: ");
     boiler_debug(label_text);
     boiler_debug(" (arc: ");
     boiler_debug(arc_value);
@@ -488,15 +493,16 @@ static void set_boiler_off(BoilerInfo* boiler) {
     
     // Set arc to 0% and label to "OFF" with mutex protection
     TAKE_MUTEX() {
-        // Check if brewing is active - if so, keep arcs and labels hidden
+        // Check if brewing OR water alarm is active - if so, keep arcs and labels hidden
         bool brewing_active = brewing_display_is_active();
+        bool water_alarm_active = water_alarm_is_active();
         
-        if (!brewing_active) {
-            // Only show arcs and labels if brewing is NOT active
+        if (!brewing_active && !water_alarm_active) {
+            // Only show arcs and labels if BOTH brewing AND water alarm are NOT active
             lv_obj_clear_flag(boiler->arc, LV_OBJ_FLAG_HIDDEN);
             lv_obj_clear_flag(boiler->label, LV_OBJ_FLAG_HIDDEN);
         } else {
-            // Brewing is active - keep them hidden
+            // Brewing or water alarm is active - keep them hidden
             lv_obj_add_flag(boiler->arc, LV_OBJ_FLAG_HIDDEN);
             lv_obj_add_flag(boiler->label, LV_OBJ_FLAG_HIDDEN);
         }
@@ -536,51 +542,65 @@ static void set_boiler_heating(BoilerInfo* boiler, int64_t ready_start_time) {
 }
 
 /**
- * Set boiler to READY state
+ * Set boiler to READY state (internal version without mutex)
+ * MUST be called from within LVGL task or with mutex already held
  */
-static void set_boiler_ready(BoilerInfo* boiler) {
-    if (!boiler || !boiler->arc || !boiler->label) return;
+static void set_boiler_ready_no_mutex(BoilerInfo* boiler) {
+    if (!boiler || !boiler->arc || !boiler->label) {
+        boiler_debug("[");
+        boiler_debug(boiler_type_name(boiler->type));
+        boiler_debugln("] ERROR: NULL objects in set_boiler_ready!");
+        return;
+    }
     
     boiler->state = BOILER_STATE_READY;
-    // Reset last_remaining_sec to -1 to force update on next callback
-    // This ensures display updates even if already showing READY
     boiler->last_remaining_sec = -1;
     
-    // Set arc to 100% and label to "READY" with mutex protection
-    // Force refresh by invalidating objects to ensure display updates
-    TAKE_MUTEX() {
-        // Check if brewing is active - if so, keep arcs and labels hidden
-        bool brewing_active = brewing_display_is_active();
-        
-        if (!brewing_active) {
-            // Only show arcs and labels if brewing is NOT active
-            lv_obj_clear_flag(boiler->arc, LV_OBJ_FLAG_HIDDEN);
-            lv_obj_clear_flag(boiler->label, LV_OBJ_FLAG_HIDDEN);
-        } else {
-            // Brewing is active - keep them hidden
-            lv_obj_add_flag(boiler->arc, LV_OBJ_FLAG_HIDDEN);
-            lv_obj_add_flag(boiler->label, LV_OBJ_FLAG_HIDDEN);
-        }
-        
-        // Update values even if hidden (so they're correct when shown later)
-        lv_arc_set_value(boiler->arc, 100);
-        lv_label_set_text(boiler->label, "READY");
-        
-        // Force a refresh by invalidating the objects
-        lv_obj_invalidate(boiler->arc);
-        lv_obj_invalidate(boiler->label);
-        // Also mark as dirty to ensure redraw
-        lv_obj_mark_layout_as_dirty(boiler->arc);
-        lv_obj_mark_layout_as_dirty(boiler->label);
-        GIVE_MUTEX();
+    // Check if brewing OR water alarm is active - if so, keep arcs and labels hidden
+    bool brewing_active = brewing_display_is_active();
+    bool water_alarm_active = water_alarm_is_active();
+    
+    if (!brewing_active && !water_alarm_active) {
+        // Only show arcs and labels if BOTH brewing AND water alarm are NOT active
+        lv_obj_clear_flag(boiler->arc, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_clear_flag(boiler->label, LV_OBJ_FLAG_HIDDEN);
+    } else {
+        // Brewing or water alarm is active - keep them hidden
+        lv_obj_add_flag(boiler->arc, LV_OBJ_FLAG_HIDDEN);
+        lv_obj_add_flag(boiler->label, LV_OBJ_FLAG_HIDDEN);
     }
+    
+    // Update values even if hidden (so they're correct when shown later)
+    lv_arc_set_value(boiler->arc, 100);
+    lv_label_set_text(boiler->label, "READY");
+    
+    // Force a refresh by invalidating the objects
+    lv_obj_invalidate(boiler->arc);
+    lv_obj_invalidate(boiler->label);
     
     // Update last_remaining_sec to 0 to track READY state (0 seconds remaining)
     boiler->last_remaining_sec = 0;
     
-    boiler_debug("[Boiler] ");
+    boiler_debug("[");
     boiler_debug(boiler_type_name(boiler->type));
-    boiler_debugln(" display updated to READY");
+    boiler_debugln("] Display updated to READY");
+}
+
+/**
+ * Set boiler to READY state (public version with mutex)
+ */
+static void set_boiler_ready(BoilerInfo* boiler) {
+    if (!boiler || !boiler->arc || !boiler->label) {
+        boiler_debug("[");
+        boiler_debug(boiler_type_name(boiler->type));
+        boiler_debugln("] ERROR: NULL objects in set_boiler_ready!");
+        return;
+    }
+    
+    TAKE_MUTEX() {
+        set_boiler_ready_no_mutex(boiler);
+        GIVE_MUTEX();
+    }
 }
 
 /**

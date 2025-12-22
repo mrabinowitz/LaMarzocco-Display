@@ -1,4 +1,5 @@
 #include "water_alarm.h"
+#include "brewing_display.h"  // Need to check brewing state
 #include "ui/ui.h"
 #include <Arduino.h>
 #include <freertos/FreeRTOS.h>
@@ -87,86 +88,119 @@ void water_alarm_set(bool alarm_active) {
             // Show water alarm elements from SquareLine Studio (waterImage and waterAlarmLabel)
             if (ui_waterImage) {
                 lv_obj_clear_flag(ui_waterImage, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_invalidate(ui_waterImage);
             }
             if (ui_waterAlarmLabel) {
                 lv_obj_clear_flag(ui_waterAlarmLabel, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_invalidate(ui_waterAlarmLabel);
             }
             
             // Hide boiler arcs
             if (ui_Arc2) {
                 lv_obj_add_flag(ui_Arc2, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_invalidate(ui_Arc2);
             }
             if (ui_Arc3) {
                 lv_obj_add_flag(ui_Arc3, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_invalidate(ui_Arc3);
             }
             
             // Hide coffee and steam images
             if (ui_CoffeeImage) {
                 lv_obj_add_flag(ui_CoffeeImage, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_invalidate(ui_CoffeeImage);
             }
             if (ui_SteamImage) {
                 lv_obj_add_flag(ui_SteamImage, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_invalidate(ui_SteamImage);
             }
             
             // Hide coffee and steam labels
             if (ui_CoffeeLabel) {
                 lv_obj_add_flag(ui_CoffeeLabel, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_invalidate(ui_CoffeeLabel);
             }
             if (ui_SteamLabel) {
                 lv_obj_add_flag(ui_SteamLabel, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_invalidate(ui_SteamLabel);
             }
             
             // Hide temperature labels
             if (ui_CoffeeTempLabel) {
                 lv_obj_add_flag(ui_CoffeeTempLabel, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_invalidate(ui_CoffeeTempLabel);
             }
             if (ui_BoilerTempLabel) {
                 lv_obj_add_flag(ui_BoilerTempLabel, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_invalidate(ui_BoilerTempLabel);
             }
             
         } else {
-            // ALARM INACTIVE: Hide water elements, show boiler elements
-            water_debugln("[WaterAlarm] Hiding water alarm, showing boiler elements");
+            // ALARM INACTIVE: Hide water elements, restore boiler elements ONLY if brewing is NOT active
+            water_debugln("[WaterAlarm] Hiding water alarm");
             
             // Hide water alarm elements
             if (ui_waterImage) {
                 lv_obj_add_flag(ui_waterImage, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_invalidate(ui_waterImage);
             }
             if (ui_waterAlarmLabel) {
                 lv_obj_add_flag(ui_waterAlarmLabel, LV_OBJ_FLAG_HIDDEN);
+                lv_obj_invalidate(ui_waterAlarmLabel);
             }
+            
+            // Only show boiler elements if brewing is NOT active (includes flashing state)
+            bool brewing_active = brewing_display_is_active();
+            if (!brewing_active) {
+                water_debugln("[WaterAlarm] Brewing not active, showing boiler elements");
             
             // Show boiler arcs
             if (ui_Arc2) {
                 lv_obj_clear_flag(ui_Arc2, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_invalidate(ui_Arc2);
             }
             if (ui_Arc3) {
                 lv_obj_clear_flag(ui_Arc3, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_invalidate(ui_Arc3);
             }
             
             // Show coffee and steam images
             if (ui_CoffeeImage) {
                 lv_obj_clear_flag(ui_CoffeeImage, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_invalidate(ui_CoffeeImage);
             }
             if (ui_SteamImage) {
                 lv_obj_clear_flag(ui_SteamImage, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_invalidate(ui_SteamImage);
             }
             
             // Show coffee and steam labels
             if (ui_CoffeeLabel) {
                 lv_obj_clear_flag(ui_CoffeeLabel, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_invalidate(ui_CoffeeLabel);
             }
             if (ui_SteamLabel) {
                 lv_obj_clear_flag(ui_SteamLabel, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_invalidate(ui_SteamLabel);
             }
             
             // Show temperature labels
             if (ui_CoffeeTempLabel) {
                 lv_obj_clear_flag(ui_CoffeeTempLabel, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_invalidate(ui_CoffeeTempLabel);
             }
             if (ui_BoilerTempLabel) {
                 lv_obj_clear_flag(ui_BoilerTempLabel, LV_OBJ_FLAG_HIDDEN);
+                    lv_obj_invalidate(ui_BoilerTempLabel);
+                }
+            } else {
+                water_debugln("[WaterAlarm] Brewing is active, keeping boiler elements hidden");
             }
+        }
+        
+        // Invalidate the entire screen to ensure everything is redrawn
+        if (ui_mainScreen) {
+            lv_obj_invalidate(ui_mainScreen);
         }
         
         GIVE_MUTEX();
