@@ -342,5 +342,19 @@ void LaMarzoccoMachine::disconnect_websocket() {
 void LaMarzoccoMachine::loop() {
     // Call websocket loop regularly - this is critical for connection
     _websocket.loop();
+
+    // Auto-reconnect logic: If disconnected, try to reconnect periodically
+    // This ensures we get a fresh access token instead of reusing an expired one
+    static unsigned long last_reconnect_attempt = 0;
+    const unsigned long RECONNECT_INTERVAL_MS = 30000;  // Try reconnect every 30 seconds
+
+    if (!is_websocket_connected()) {
+        unsigned long now = millis();
+        if (now - last_reconnect_attempt >= RECONNECT_INTERVAL_MS) {
+            last_reconnect_attempt = now;
+            Serial.println("[AUTO-RECONNECT] WebSocket disconnected, attempting reconnect with fresh token...");
+            connect_websocket();  // This will refresh the access token and reconnect
+        }
+    }
 }
 
