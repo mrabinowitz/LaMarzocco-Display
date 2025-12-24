@@ -11,7 +11,7 @@ LaMarzoccoWebSocket::LaMarzoccoWebSocket(LaMarzoccoClient& client)
     : _client(client), _connected(false), _message_callback(nullptr) {
     _instance = this;
     _ws.onEvent(_ws_event_handler);
-    _ws.setReconnectInterval(5000);  // 5 second reconnect interval
+    _ws.setReconnectInterval(10000);  // 10 second auto-reconnect interval
     // Don't call beginSSL here - wait until connect() is called
 }
 
@@ -153,14 +153,16 @@ void LaMarzoccoWebSocket::_handle_websocket_event(WStype_t type, uint8_t* payloa
     switch (type) {
         case WStype_DISCONNECTED:
             {
-                debug("WebSocket disconnected");
+                // Reduce logging noise - just a simple message
+                debug("⚠️  WebSocket disconnected");
                 if (payload && length > 0) {
-                    debug(" - reason: ");
+                    debug(" - ");
                     debugln((char*)payload);
                 } else {
-                    debugln("");
+                    debugln(" (auto-reconnect in 10s)");
                 }
                 _connected = false;
+                _subscription_id = "";  // Clear subscription on disconnect
             }
             break;
             
@@ -369,58 +371,45 @@ void LaMarzoccoWebSocket::_handle_websocket_event(WStype_t type, uint8_t* payloa
 bool LaMarzoccoWebSocket::connect(const String& serial_number) {
     _serial_number = serial_number;
     
-    debug("WebSocket connect() called for serial: ");
-    debugln(_serial_number);
+    debugln("🔌 Connecting WebSocket...");
     
-    // Ensure we have access token before connecting and CACHE IT
+    // Refresh access token before connecting (in case it expired)
     // This is critical - we cannot safely call _client methods from the WebSocket callback
     if (!_client.get_access_token()) {
-        debugln("ERROR: Failed to get access token for websocket");
+        debugln("❌ Failed to get access token");
         return false;
     }
     
     _cached_token = _client.get_access_token_string();
     if (_cached_token.length() == 0) {
-        debugln("ERROR: Access token is empty!");
+        debugln("❌ Access token is empty!");
         return false;
     }
     
-    debug("Access token cached, length: ");
-    debugln(_cached_token.length());
-    
     // Disconnect if already connected
     if (_connected) {
-        debugln("Disconnecting existing connection...");
         disconnect();
-        // Don't use delay() - let the loop handle disconnection
+        delay(300);  // Wait for clean disconnect
     }
     
     // Get installation key headers for HTTP upgrade request
-    // The Python code sends these headers in the HTTP WebSocket upgrade request
     InstallationKey key;
     if (!_client.get_installation_key(key)) {
-        debugln("ERROR: Failed to get installation key!");
+        debugln("❌ Failed to get installation key!");
         return false;
     }
     
     String installation_id, timestamp, nonce, signature;
-    debugln("🔐 Generating request signature (heavy crypto work)...");
     LaMarzoccoAuth::generate_extra_request_headers(key, installation_id, timestamp, nonce, signature);
     
     if (signature.length() == 0) {
-        debugln("ERROR: Failed to generate signature!");
+        debugln("❌ Failed to generate signature!");
         return false;
     }
     
-    debugln("✓ Signature generated successfully");
     yield();  // Give system time to recover after heavy crypto
     
-    debugln("📋 WEBSOCKET CONNECTION HEADERS:");
-    debugln("  X-App-Installation-Id: " + installation_id);
-    debugln("  X-Timestamp: " + timestamp);
-    debugln("  X-Nonce: " + nonce);
-    debugln("  X-Request-Signature: " + signature);
-    debugln("");
+    // Prepare HTTP upgrade headers
     
     // CRITICAL: Installation key headers MUST be sent in HTTP WebSocket upgrade request
     // WebSocketsClient library adds NEW_LINE after extraHeaders, so don't add trailing \r\n
@@ -437,48 +426,25 @@ bool LaMarzoccoWebSocket::connect(const String& serial_number) {
     extraHeaders += "\r\nX-Request-Signature: ";
     extraHeaders += signature;  // No \r\n on last header
     
-    debug("Setting extra headers for HTTP upgrade (length=");
-    debug(extraHeaders.length());
-    debugln(")");
-    
     // Set extra headers BEFORE calling beginSSL
-    // This is critical - without these headers, server will reject connection
     _ws.setExtraHeaders(extraHeaders.c_str());
-    debugln("✓ Extra headers configured");
-    
-    // Connect to websocket (beginSSL handles SSL automatically)
-    debugln("🚀 Starting WebSocket connection...");
-    debug("📡 URL: wss://");
-    debug(WS_BASE_URL);
-    debugln("/ws/connect");
     
     // Make sure we're not already trying to connect
-    // Disconnect and wait longer to ensure full cleanup
     _ws.disconnect();
-    delay(200);  // Increased delay to ensure disconnect completes fully
-    yield();     // Allow other tasks to run
+    delay(200);
+    yield();
     
     // Safety check: verify we have enough free heap before connecting
     size_t free_heap = ESP.getFreeHeap();
-    debug("Free heap before connection: ");
-    debug(free_heap);
-    debugln(" bytes");
-    
     if (free_heap < 20000) {
-        debugln("⚠️ WARNING: Low memory, skipping WebSocket connection");
+        debugln("❌ Low memory, skipping connection");
         return false;
     }
     
-    debugln("Calling beginSSL()...");
-    
-    // Wrap in try-catch equivalent (check for errors after call)
+    // Connect to websocket (beginSSL handles SSL automatically)
     _ws.beginSSL(WS_BASE_URL, 443, "/ws/connect");
     
-    debugln("✓ beginSSL() returned");
-    
-    debugln("⏳ WebSocket connection initiated, waiting for handshake...");
-    debugln("💡 You should see messages when power state changes!");
-    debugln("");
+    debugln("✓ Connection initiated, waiting for handshake...");
     
     return true;
 }
@@ -512,7 +478,7 @@ void LaMarzoccoWebSocket::disconnect() {
     _cached_token = "";
     
     // Re-enable reconnect interval for future connections
-    _ws.setReconnectInterval(5000);
+    _ws.setReconnectInterval(10000);
 }
 
 void LaMarzoccoWebSocket::loop() {

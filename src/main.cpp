@@ -235,15 +235,35 @@ void loop()
   // Small delay to prevent watchdog issues, but keep loop responsive
   delay(10);
   
-  // Periodic connection check (every 30 seconds)
+  // Fast reconnection check (every 5 seconds)
   static unsigned long last_check = 0;
-  if (millis() - last_check > 30000) {
+  static unsigned long last_reconnect_attempt = 0;
+  static const unsigned long CHECK_INTERVAL = 5000;     // Check every 5 seconds
+  static const unsigned long RECONNECT_INTERVAL = 10000; // Try reconnect every 10 seconds
+  
+  if (millis() - last_check > CHECK_INTERVAL) {
     last_check = millis();
     if (g_machine) {
       if (g_machine->is_websocket_connected()) {
-        Serial.println("[STATUS] WebSocket is connected and running");
+        // Connected - only log occasionally to reduce noise
+        static unsigned long last_log = 0;
+        if (millis() - last_log > 60000) { // Log every 60 seconds when connected
+          Serial.println("[STATUS] ✓ WebSocket connected");
+          last_log = millis();
+        }
       } else {
-        Serial.println("[STATUS] WebSocket is NOT connected");
+        // Disconnected - try to reconnect quickly
+        if (millis() - last_reconnect_attempt > RECONNECT_INTERVAL) {
+          last_reconnect_attempt = millis();
+          Serial.println("[RECONNECT] WebSocket disconnected, reconnecting...");
+          
+          // Try to reconnect
+          if (g_machine->connect_websocket()) {
+            Serial.println("[RECONNECT] ✓ Reconnection initiated");
+          } else {
+            Serial.println("[RECONNECT] ✗ Reconnection failed, will retry in 10s");
+          }
+        }
       }
     }
   }
