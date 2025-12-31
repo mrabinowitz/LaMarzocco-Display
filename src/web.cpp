@@ -17,6 +17,7 @@ void setupAP()
 {
     log_i("Configuring access point...");
     WiFi.softAP(AP_SSID);
+    WiFi.setSleep(false);
     delay(100);
     dnsServer.start(DNS_PORT, "*", WiFi.softAPIP());
     if (!MDNS.begin(AP_SSID)) // using same name as SSID, shottimer.local
@@ -63,5 +64,8 @@ void setupWEB(void)
     timer = millis();
 
     TaskHandle_t t1;
-    xTaskCreatePinnedToCore((void (*)(void *))webTask, "webTask", 8192, NULL, 10, &t1, 0);
+    //changed this as per Gemini as it could be causing the web server crash.
+    //xTaskCreatePinnedToCore((void (*)(void *))webTask, "webTask", 8192, NULL, 10, &t1, 0);
+    // Increased stack to 16k, lowered priority to 1, moved to Core 1
+    xTaskCreatePinnedToCore((void (*)(void *))webTask, "webTask", 16384, NULL, 1, &t1, 1);
 }
