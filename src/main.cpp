@@ -32,6 +32,7 @@ bool connectToWiFi(const String &ssid, const String &password)
 {
   debugln("Attempting to connect to WiFi...");
   WiFi.begin(ssid.c_str(), password.c_str());
+  WiFi.setSleep(false);
   int retries = 0;
   while (WiFi.status() != WL_CONNECTED && retries < MAX_WIFI_RETRIES)
   {
@@ -57,10 +58,38 @@ bool connectToWiFi(const String &ssid, const String &password)
   }
 }
 
+//function to enter deep sleep mode.  This helps to save power when device not in use and using a battery.
+void enterDeepSleep() {
+    Serial.println("Preparing to sleep...");
+    
+    // 1. Turn off the display so you know it worked
+    amoled.setBrightness(0);
+    
+    // 2. CRITICAL: Wait for button release!
+    // This loop blocks the code until you let go of the button.
+    // Otherwise, the device sleeps and wakes up instantly.
+    while (digitalRead(0) == LOW) {
+        delay(10);
+    }
+    
+    // 3. Small debounce delay to ensure the signal is clean
+    delay(100);
+
+    Serial.println("Goodnight!");
+
+    // 4. Configure Wakeup Source
+    // Wake up when GPIO 0 goes LOW (Pressed again)
+    esp_sleep_enable_ext0_wakeup(GPIO_NUM_0, 0);
+    
+    // 5. Enter Deep Sleep
+    esp_deep_sleep_start();
+}
+
 void setup()
 {
   Serial.begin(115200);
   preferences.begin("config", false);
+  pinMode(0, INPUT_PULLUP);
 
   bool rslt = false;
 
@@ -267,6 +296,20 @@ void loop()
       }
     }
   }
+  // Check if BOOT button (GPIO 0) is held down to turn OFF
+    // (GPIO 0 is LOW when pressed)
+    if (digitalRead(0) == LOW) {
+        delay(100); // Debounce
+        unsigned long startTime = millis();
+        
+        // Wait to see if user holds it for 2 seconds
+        while (digitalRead(0) == LOW) {
+            if (millis() - startTime > 2000) {
+                // User held it for 2 seconds -> SLEEP
+                enterDeepSleep(); 
+            }
+        }
+    }
 }
 
 void Task_LVGL(void *pvParameters)
