@@ -64,7 +64,13 @@ This project is designed for the [LilyGo T-Display S3 AMOLED](https://lilygo.cc/
    ```
    Or click the "Upload" button in the PlatformIO toolbar in VS Code.
 
-6. **Configure WiFi and La Marzocco credentials**
+6. **Upload Filesystem Image**
+   ```bash
+   pio run --target uploadfs
+   ```
+   Or click the "Upload Filesystem Image" button in the PlatformIO toolbar in VS Code.
+   
+7. **Configure WiFi and La Marzocco credentials**
    - After first boot, the device will create a WiFi access point
    - Connect to the AP and configure your WiFi credentials and La Marzocco account details via the web interface
 
