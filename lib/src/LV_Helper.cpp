@@ -8,6 +8,7 @@
  */
 #include <Arduino.h>
 #include "LV_Helper.h"
+#include "activity_monitor.h"
 
 
 #if LVGL_VERSION_MAJOR == 8
@@ -36,6 +37,7 @@ static void touchpad_read( lv_indev_drv_t *indev_driver, lv_indev_data_t *data )
     static int16_t x, y;
     uint8_t touched =   static_cast<LilyGo_Display *>(indev_driver->user_data)->getPoint(&x, &y, 1);
     if ( touched ) {
+        activity_monitor_mark_user_activity();
         data->point.x = x;
         data->point.y = y;
         data->state = LV_INDEV_STATE_PR;

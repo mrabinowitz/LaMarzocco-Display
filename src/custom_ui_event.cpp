@@ -1,10 +1,12 @@
 #include "ui/ui.h"
 #include "lamarzocco_machine.h"
+#include "activity_monitor.h"
 
 extern LaMarzoccoMachine* g_machine;
 
 void wifiSetup(lv_event_t *e)
 {
+    activity_monitor_mark_user_activity();
     lv_label_set_text(ui_SSIDLabel, "SSID: " AP_SSID);
     lv_label_set_text(ui_URLLabel, "URL:  http://" AP_SSID ".local");
     lv_scr_load(ui_setupWifiScreen);
@@ -12,6 +14,7 @@ void wifiSetup(lv_event_t *e)
 
 void turnOnMachine(lv_event_t * e)
 {
+  activity_monitor_mark_user_activity();
   // Get the machine control instance
   if (g_machine) {
     Serial.println("===========================================");
@@ -51,6 +54,7 @@ void turnOnMachine(lv_event_t * e)
 
 void toggleSteamBoiler(lv_event_t * e)
 {
+  activity_monitor_mark_user_activity();
   // Get the machine control instance
   if (g_machine) {
     Serial.println("===========================================");

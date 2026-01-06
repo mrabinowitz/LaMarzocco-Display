@@ -14,6 +14,7 @@
 #include "boiler_display.h"
 #include "water_alarm.h"
 #include "brewing_display.h"
+#include "activity_monitor.h"
 
 Preferences preferences;
 LaMarzoccoClient* g_client = nullptr;
@@ -23,6 +24,7 @@ LaMarzoccoMachine* g_machine = nullptr;
 LilyGo_Class amoled;
 SemaphoreHandle_t gui_mutex;
 void Task_LVGL(void *pvParameters);
+void updateSerialLoggingPowerState(bool force);
 
 // WiFi connection variables
 const int MAX_WIFI_RETRIES = 10;
@@ -55,6 +57,28 @@ bool connectToWiFi(const String &ssid, const String &password)
     debugln("Failed to connect to WiFi");
     WiFi.disconnect();
     return false;
+  }
+}
+
+void updateSerialLoggingPowerState(bool force)
+{
+  static bool serial_enabled = true;
+  static unsigned long last_check_ms = 0;
+  unsigned long now = millis();
+
+  if (!force && (now - last_check_ms) < 5000) {
+    return;
+  }
+  last_check_ms = now;
+
+  bool usb_powered = amoled.isVbusIn();
+  if (usb_powered && !serial_enabled) {
+    Serial.begin(115200);
+    serial_enabled = true;
+  } else if (!usb_powered && serial_enabled) {
+    Serial.flush();
+    Serial.end();
+    serial_enabled = false;
   }
 }
 
@@ -104,6 +128,10 @@ void setup()
       delay(1000);
     }
   }
+
+  updateSerialLoggingPowerState(true);
+
+  activity_monitor_init(USER_INACTIVITY_TIMEOUT_MS, MACHINE_INACTIVITY_TIMEOUT_MS);
 
   gui_mutex = xSemaphoreCreateMutex();
   if (gui_mutex == NULL)
@@ -251,6 +279,7 @@ void loop()
   updateDateTime();
   updateStatusImages();  // Update battery and WiFi images (initial + every 30 seconds)
   checkWiFiConnection(); // Monitor WiFi connection and redirect if disconnected
+  updateSerialLoggingPowerState(false);
   
   // Check GPIO 15 for brewing simulation mode
   brewing_display_check_gpio_simulation();
@@ -295,6 +324,33 @@ void loop()
         }
       }
     }
+  }
+
+  static bool display_dimmed = false;
+  unsigned long last_user_ms = activity_monitor_last_user_ms();
+  unsigned long last_machine_ms = activity_monitor_last_machine_ms();
+  unsigned long now = millis();
+  bool user_dim_inactive = (USER_DIM_TIMEOUT_MS > 0) &&
+                           (now >= last_user_ms) &&
+                           (static_cast<uint32_t>(now - last_user_ms) >= USER_DIM_TIMEOUT_MS);
+  bool machine_dim_inactive = (MACHINE_DIM_TIMEOUT_MS > 0) &&
+                              (now >= last_machine_ms) &&
+                              (static_cast<uint32_t>(now - last_machine_ms) >= MACHINE_DIM_TIMEOUT_MS);
+  bool should_dim = user_dim_inactive && machine_dim_inactive;
+  if (should_dim && !display_dimmed) {
+    amoled.setBrightness(DISPLAY_BRIGHTNESS_DIM);
+    display_dimmed = true;
+  } else if (!should_dim && display_dimmed) {
+    amoled.setBrightness(DISPLAY_BRIGHTNESS_ACTIVE);
+    display_dimmed = false;
+  }
+
+  bool user_inactive = activity_monitor_is_user_inactive(now);
+  bool machine_inactive = activity_monitor_is_machine_inactive(now);
+  if (user_inactive && machine_inactive) {
+    Serial.print("[SLEEP] Inactivity timeout: ");
+    Serial.println("user + machine");
+    enterDeepSleep();
   }
   // Check if BOOT button (GPIO 0) is held down to turn OFF
     // (GPIO 0 is LOW when pressed)

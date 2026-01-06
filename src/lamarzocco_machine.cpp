@@ -3,6 +3,7 @@
 #include "boiler_display.h"
 #include "water_alarm.h"
 #include "brewing_display.h"
+#include "activity_monitor.h"
 #include <ArduinoJson.h>
 
 LaMarzoccoMachine* LaMarzoccoMachine::_instance = nullptr;
@@ -156,6 +157,16 @@ void LaMarzoccoMachine::_websocket_message_handler(const String& message) {
                         Serial.println(no_water_alarm ? "TRUE ⚠️" : "false");
                     }
                 }
+            }
+        }
+
+        static bool last_brewing_state = false;
+        static bool last_brewing_state_valid = false;
+        if (machine_status) {
+            if (!last_brewing_state_valid || is_brewing != last_brewing_state) {
+                activity_monitor_mark_machine_activity();
+                last_brewing_state = is_brewing;
+                last_brewing_state_valid = true;
             }
         }
         
@@ -357,4 +368,3 @@ void LaMarzoccoMachine::loop() {
         }
     }
 }
-
