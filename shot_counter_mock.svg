@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="320" viewBox="0 0 480 320">
+  <rect width="480" height="320" fill="#f6f7fb"/>
+  <rect x="14" y="14" width="452" height="292" rx="18" fill="#ffffff" stroke="#d8dbe6"/>
+
+  <!-- top row -->
+  <text x="40" y="52" font-family="Arial, sans-serif" font-size="20" fill="#6b7380">12 : 04</text>
+
+  <!-- coffee count -->
+  <circle cx="165" cy="44" r="10" fill="#4040ff"/>
+  <text x="159" y="48" font-family="Arial, sans-serif" font-size="10" fill="#ffffff">☕</text>
+  <text x="182" y="50" font-family="Arial, sans-serif" font-size="16" fill="#2c313a">123</text>
+
+  <!-- flush count -->
+  <circle cx="235" cy="44" r="10" fill="#52a7ff"/>
+  <text x="229" y="48" font-family="Arial, sans-serif" font-size="10" fill="#ffffff">💧</text>
+  <text x="252" y="50" font-family="Arial, sans-serif" font-size="16" fill="#2c313a">7</text>
+
+  <!-- wifi/battery placeholders -->
+  <rect x="392" y="32" width="22" height="12" rx="2" fill="#e6e9f2"/>
+  <rect x="420" y="30" width="26" height="16" rx="2" fill="#e6e9f2"/>
+
+  <!-- main arcs -->
+  <circle cx="160" cy="165" r="70" fill="none" stroke="#4040ff" stroke-width="10"/>
+  <circle cx="305" cy="165" r="70" fill="none" stroke="#4040ff" stroke-width="10"/>
+
+  <!-- labels -->
+  <text x="132" y="172" font-family="Arial, sans-serif" font-size="20" fill="#6b7380">READY</text>
+  <text x="278" y="172" font-family="Arial, sans-serif" font-size="20" fill="#6b7380">READY</text>
+  <text x="150" y="205" font-family="Arial, sans-serif" font-size="14" fill="#6b7380">96°C</text>
+  <text x="300" y="205" font-family="Arial, sans-serif" font-size="14" fill="#6b7380">L2</text>
+
+  <!-- side buttons -->
+  <circle cx="420" cy="150" r="26" fill="#f1f2f6" stroke="#d8dbe6"/>
+  <circle cx="420" cy="215" r="26" fill="#f1f2f6" stroke="#d8dbe6"/>
+</svg>
