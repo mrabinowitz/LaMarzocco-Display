@@ -3,6 +3,7 @@
 #include "boiler_display.h"
 #include "water_alarm.h"
 #include "brewing_display.h"
+#include "power_manager.h"
 #include <ArduinoJson.h>
 
 LaMarzoccoMachine* LaMarzoccoMachine::_instance = nullptr;
@@ -94,6 +95,11 @@ void LaMarzoccoMachine::_websocket_message_handler(const String& message) {
                             Serial.print(")");
                         }
                         Serial.println();
+
+                        // Notify power manager of machine state
+                        bool is_on = (strcmp(machine_status, "PoweredOn") == 0 ||
+                                     strcmp(machine_status, "Brewing") == 0);
+                        power_manager_set_machine_on(is_on);
                     }
                 }
                 // Extract coffee boiler status and ready time
@@ -171,9 +177,25 @@ void LaMarzoccoMachine::_websocket_message_handler(const String& message) {
         
         // Update water alarm state
         water_alarm_set(no_water_alarm);
-        
+
         // Update brewing display
         brewing_display_update(is_brewing, brewing_start_time);
+
+        // Notify power manager of brewing state
+        power_manager_set_brewing(is_brewing);
+
+        // Notify power manager of heating state (either boiler heating)
+        bool is_heating = false;
+        if (coffee_boiler_status && strcmp(coffee_boiler_status, "HeatingUp") == 0) {
+            is_heating = true;
+        }
+        if (steam_boiler_status && strcmp(steam_boiler_status, "HeatingUp") == 0) {
+            is_heating = true;
+        }
+        power_manager_set_heating(is_heating);
+
+        // Register WebSocket activity with power manager
+        power_manager_register_activity(ACTIVITY_WEBSOCKET);
         
         // Update boiler displays if we have machine status
         // Boiler displays (labels) continue to update even during water alarm

@@ -14,6 +14,7 @@
 #include "boiler_display.h"
 #include "water_alarm.h"
 #include "brewing_display.h"
+#include "power_manager.h"
 
 Preferences preferences;
 LaMarzoccoClient* g_client = nullptr;
@@ -56,33 +57,6 @@ bool connectToWiFi(const String &ssid, const String &password)
     WiFi.disconnect();
     return false;
   }
-}
-
-//function to enter deep sleep mode.  This helps to save power when device not in use and using a battery.
-void enterDeepSleep() {
-    Serial.println("Preparing to sleep...");
-    
-    // 1. Turn off the display so you know it worked
-    amoled.setBrightness(0);
-    
-    // 2. CRITICAL: Wait for button release!
-    // This loop blocks the code until you let go of the button.
-    // Otherwise, the device sleeps and wakes up instantly.
-    while (digitalRead(0) == LOW) {
-        delay(10);
-    }
-    
-    // 3. Small debounce delay to ensure the signal is clean
-    delay(100);
-
-    Serial.println("Goodnight!");
-
-    // 4. Configure Wakeup Source
-    // Wake up when GPIO 0 goes LOW (Pressed again)
-    esp_sleep_enable_ext0_wakeup(GPIO_NUM_0, 0);
-    
-    // 5. Enter Deep Sleep
-    esp_deep_sleep_start();
 }
 
 void setup()
@@ -261,6 +235,9 @@ void loop()
     g_machine->loop();  // This calls websocket.loop()
   }
   
+  // Power manager loop - handles dimming, low power, and sleep states
+  power_manager_loop();
+
   // Small delay to prevent watchdog issues, but keep loop responsive
   delay(10);
   
@@ -296,20 +273,23 @@ void loop()
       }
     }
   }
-  // Check if BOOT button (GPIO 0) is held down to turn OFF
-    // (GPIO 0 is LOW when pressed)
-    if (digitalRead(0) == LOW) {
-        delay(100); // Debounce
-        unsigned long startTime = millis();
-        
-        // Wait to see if user holds it for 2 seconds
-        while (digitalRead(0) == LOW) {
-            if (millis() - startTime > 2000) {
-                // User held it for 2 seconds -> SLEEP
-                enterDeepSleep(); 
-            }
-        }
-    }
+  // Check if BOOT button (GPIO 0) is pressed
+  // (GPIO 0 is LOW when pressed)
+  if (digitalRead(0) == LOW) {
+      delay(100); // Debounce
+      power_manager_button_pressed();  // Register activity (wakes from dimmed/low power)
+
+      unsigned long startTime = millis();
+
+      // Wait to see if user holds it for 2 seconds
+      while (digitalRead(0) == LOW) {
+          if (millis() - startTime > 2000) {
+              // User held it for 2 seconds -> DEEP SLEEP
+              power_manager_button_long_press();
+              break;  // power_manager handles sleep, break in case it returns
+          }
+      }
+  }
 }
 
 void Task_LVGL(void *pvParameters)
@@ -328,7 +308,11 @@ void Task_LVGL(void *pvParameters)
   // Initialize brewing display system
   brewing_display_set_mutex((void*)gui_mutex);
   brewing_display_init();
-  
+
+  // Initialize power manager (must be after AMOLED is ready)
+  power_manager_set_mutex((void*)gui_mutex);
+  power_manager_init((void*)&amoled);
+
   // Main LVGL loop
   while (1)
   {

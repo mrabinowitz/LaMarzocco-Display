@@ -1,5 +1,6 @@
 #include "ui/ui.h"
 #include "lamarzocco_machine.h"
+#include "power_manager.h"
 
 extern LaMarzoccoMachine* g_machine;
 
@@ -12,6 +13,9 @@ void wifiSetup(lv_event_t *e)
 
 void turnOnMachine(lv_event_t * e)
 {
+  // Register touch activity with power manager
+  power_manager_register_activity(ACTIVITY_TOUCH);
+
   // Get the machine control instance
   if (g_machine) {
     Serial.println("===========================================");
@@ -51,6 +55,9 @@ void turnOnMachine(lv_event_t * e)
 
 void toggleSteamBoiler(lv_event_t * e)
 {
+  // Register touch activity with power manager
+  power_manager_register_activity(ACTIVITY_TOUCH);
+
   // Get the machine control instance
   if (g_machine) {
     Serial.println("===========================================");
